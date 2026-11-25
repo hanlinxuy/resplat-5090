@@ -671,8 +671,8 @@ class MultiViewFeatureTransformer(nn.Module):
         )  # [N*B, N-1, H*W, C]
 
         for i, layer in enumerate(self.layers):
-            if self.use_checkpointing:
-                def custom_forward(x, y):
+            if self.use_checkpointing and self.training and torch.is_grad_enabled():
+                def custom_forward(x, y, layer=layer):
                     return layer(x, y, 
                             height=h,
                             width=w,
@@ -680,7 +680,9 @@ class MultiViewFeatureTransformer(nn.Module):
                             attn_num_splits=attn_num_splits,
                             )
 
-                concat0 = torch.utils.checkpoint.checkpoint(custom_forward, concat0, concat1)
+                concat0 = torch.utils.checkpoint.checkpoint(
+                    custom_forward, concat0, concat1, use_reentrant=False,
+                )
             else:
                 concat0 = layer(
                     concat0,

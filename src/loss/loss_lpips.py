@@ -1,10 +1,13 @@
 from dataclasses import dataclass
+from functools import partial
+import os
 
 import torch
 from einops import rearrange
 from jaxtyping import Float
 from lpips import LPIPS
 from torch import Tensor
+from torch.utils.checkpoint import checkpoint
 
 from ..dataset.types import BatchedExample
 from ..misc.nn_module_tools import convert_to_buffer
@@ -31,6 +34,10 @@ class LossLpips(Loss[LossLpipsCfg, LossLpipsCfgWrapper]):
 
     def __init__(self, cfg: LossLpipsCfgWrapper) -> None:
         super().__init__(cfg)
+        self.checkpoint_perceptual = os.environ.get("RESPLAT_PERCEPTUAL_CHECKPOINT") == "1"
+        self.perceptual_view_chunk = int(os.environ.get("RESPLAT_PERCEPTUAL_VIEW_CHUNK", "0"))
+        if self.perceptual_view_chunk < 0:
+            raise ValueError("RESPLAT_PERCEPTUAL_VIEW_CHUNK must be nonnegative")
 
         if self.cfg.perceptual_loss:
             self.lpips = PerceptualLoss()
@@ -74,10 +81,19 @@ class LossLpips(Loss[LossLpipsCfg, LossLpipsCfgWrapper]):
                     gt, scale_factor=0.5, mode="bilinear", align_corners=True
                 )
 
-            loss = self.lpips.forward(
-                pred,
-                gt,
-            )
+            perceptual = self.lpips
+            if self.checkpoint_perceptual and torch.is_grad_enabled() and pred.requires_grad:
+                perceptual = partial(checkpoint, self.lpips, use_reentrant=False)
+
+            chunk = self.perceptual_view_chunk
+            if 0 < chunk < pred.size(0):
+                terms = [
+                    perceptual(pred_chunk, gt_chunk) * pred_chunk.size(0)
+                    for pred_chunk, gt_chunk in zip(pred.split(chunk), gt.split(chunk), strict=True)
+                ]
+                loss = torch.stack(terms).sum() / pred.size(0)
+            else:
+                loss = perceptual(pred, gt)
         else:
             loss = self.lpips.forward(
                 rearrange(prediction.color, "b v c h w -> (b v) c h w"),

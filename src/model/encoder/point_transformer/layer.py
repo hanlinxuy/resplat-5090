@@ -11,6 +11,25 @@ from ..unimatch.dinov2.layers.block import Block as MultiViewBlock
 from .local_knn import local_knn_query
 
 
+class PackedKVGather(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, kv, indices):
+        # PointOps treats -1 as padding. Keep the original FP32 accumulation
+        # of duplicate-index gradients without promoting the gathered features.
+        ctx.save_for_backward(indices)
+        ctx.shape = kv.shape
+        ctx.dtype = kv.dtype
+        return torch.cat((kv, kv.new_zeros((1, kv.shape[1]))))[indices]
+
+    @staticmethod
+    def backward(ctx, grad):
+        indices, = ctx.saved_tensors
+        rows, channels = ctx.shape
+        result = torch.zeros((rows + 1, channels), device=grad.device, dtype=torch.float32)
+        result.index_put_((indices.flatten(),), grad.reshape(-1, channels).float(), accumulate=True)
+        return result[:rows].to(ctx.dtype), None
+
+
 class KNNAttention(nn.Module):
     def __init__(self, channels, knn_samples=16,
         num_heads=1,
@@ -18,6 +37,8 @@ class KNNAttention(nn.Module):
         ):
         super().__init__()
         self.proj_channels = proj_channels
+        self.packed_kv = False
+        self.fused_local_rows = None
 
         self.knn_samples = knn_samples
         self.num_heads = num_heads
@@ -43,29 +64,38 @@ class KNNAttention(nn.Module):
         scale_factor = head_dim ** -0.5
 
         qkv = self.qkv(x)
-        # [N, C]
-        x_q, x_k, x_v = torch.chunk(qkv, chunks=3, dim=-1)
+        if (self.fused_local_rows is not None and knn_idx is not None and c == 64
+                and qkv.dtype == torch.bfloat16 and knn_idx.shape[1] == 16 and qkv.is_cuda):
+            from .fused_local_attention import FusedLocalAttention
 
-        # [N, K, C+3], [N, K]
-        x_k, idx = pointops.knn_query_and_group(
-            x_k.contiguous(), p, o, new_xyz=p, new_offset=o,
-            idx=knn_idx,
-            nsample=self.knn_samples, with_xyz=False
-        )
+            return self.proj(FusedLocalAttention.apply(qkv.contiguous(), knn_idx.contiguous(),
+                                                       self.fused_local_rows))
+        if self.packed_kv and knn_idx is not None:
+            x_q = qkv[:, :c]
+            indices = knn_idx.long()
+            x_k, x_v = PackedKVGather.apply(qkv[:, c:], indices).split(c, dim=-1)
+        else:
+            # [N, C]
+            x_q, x_k, x_v = torch.chunk(qkv, chunks=3, dim=-1)
 
-        # [N, K, C]
-        x_v, _ = pointops.knn_query_and_group(
-            x_v.contiguous(),
-            p,
-            o,
-            new_xyz=p,
-            new_offset=o,
-            idx=idx,
-            nsample=self.knn_samples,
-            with_xyz=False,
-        )
+            # [N, K, C+3], [N, K]
+            x_k, idx = pointops.knn_query_and_group(
+                x_k.contiguous(), p, o, new_xyz=p, new_offset=o,
+                idx=knn_idx,
+                nsample=self.knn_samples, with_xyz=False
+            )
 
-        n, k, c = x_k.shape
+            # [N, K, C]
+            x_v, _ = pointops.knn_query_and_group(
+                x_v.contiguous(),
+                p,
+                o,
+                new_xyz=p,
+                new_offset=o,
+                idx=idx,
+                nsample=self.knn_samples,
+                with_xyz=False,
+            )
 
         # [N, 1, K]
         scores = torch.matmul(x_q.unsqueeze(1), x_k.permute(0, 2, 1)) * scale_factor
@@ -147,6 +177,7 @@ class PlainPointTransformer(nn.Module):
         self.with_mv_attn_lowres = with_mv_attn_lowres
 
         self.use_local_knn = use_local_knn
+        self.fused_knn_candidates = False
         self.local_knn_spatial_radius = local_knn_spatial_radius
         self.local_knn_num_neighbor_views = local_knn_num_neighbor_views
         self.local_knn_cross_view_radius = local_knn_cross_view_radius
@@ -192,6 +223,7 @@ class PlainPointTransformer(nn.Module):
                 spatial_radius=self.local_knn_spatial_radius,
                 num_neighbor_views=self.local_knn_num_neighbor_views,
                 cross_view_radius=self.local_knn_cross_view_radius,
+                fused_candidates=self.fused_knn_candidates,
             )
         else:
             knn_idx, _ = pointops.knn_query(self.knn_samples, p, o, p, o)
@@ -286,6 +318,7 @@ class MultViewLowresAttn(nn.Module):
         self.norm2 = nn.LayerNorm(channels * down_factor ** 2)
 
         self.conv = nn.Conv2d(channels, channels, 3, 1, 1)
+        self.channels_last_conv = False
 
         if attn_proj_channels:
             self.proj3 = nn.Linear(channels, ori_channels)
@@ -329,6 +362,8 @@ class MultViewLowresAttn(nn.Module):
         x = self.norm2(x)
 
         x = rearrange(x, "b (v h w) c -> (b v) c h w", v=v, h=h // self.down_factor, w=w // self.down_factor)
+        if self.channels_last_conv:
+            x = x.contiguous(memory_format=torch.channels_last)
         x = F.pixel_shuffle(x, down_factor)
         x = self.conv(x)
         if self.down_factor == 8:
@@ -375,6 +410,8 @@ class MultViewLowresAttn(nn.Module):
         x = self.norm2(x)
 
         x = rearrange(x, "b (v h w) c -> (b v) c h w", v=v, h=h // self.down_factor, w=w // self.down_factor)
+        if self.channels_last_conv:
+            x = x.contiguous(memory_format=torch.channels_last)
         x = F.pixel_shuffle(x, down_factor)
         x = self.conv(x)
         if self.down_factor == 8:

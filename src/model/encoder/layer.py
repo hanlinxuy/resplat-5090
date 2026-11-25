@@ -1,3 +1,5 @@
+import os
+
 import torch.nn as nn
 
 from torchvision.models import resnet18, resnet34, resnet50
@@ -11,12 +13,13 @@ class ResNetFeatureWarpper(nn.Module):
 
         self.shallow_resnet_feature = shallow_resnet_feature
 
+        pretrained = os.environ.get("RESPLAT_SYNTHETIC_RANDOM_WEIGHTS") != "1"
         if resnet_layers == 18:
-            resnet = resnet18(pretrained=True)
+            resnet = resnet18(pretrained=pretrained)
         elif resnet_layers == 34:
-            resnet = resnet34(pretrained=True)
+            resnet = resnet34(pretrained=pretrained)
         elif resnet_layers == 50:
-            resnet = resnet50(pretrained=True)
+            resnet = resnet50(pretrained=pretrained)
         else:
             raise NotImplementedError
 

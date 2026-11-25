@@ -42,6 +42,7 @@ optimizer:
   weight_decay: 0.01
   warm_up_ratio: 0.01
   adamw_8bit: false
+  fused_adamw: false
 
 checkpointing:
   load: null
@@ -101,6 +102,7 @@ test:
 seed: 111123
 
 trainer:
+  accumulate_grad_batches: 1
   max_steps: -1
   val_check_interval: 0.5
   gradient_clip_val: 0.5

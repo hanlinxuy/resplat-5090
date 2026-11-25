@@ -1,4 +1,6 @@
+from contextlib import nullcontext
 from dataclasses import dataclass
+import os
 from typing import Literal
 
 import torch
@@ -65,7 +67,7 @@ class GSplatDecoderSplattingCUDA(Decoder[GSplatDecoderSplattingCUDACfg]):
         intrinsics[:, :, 0] *= width
         intrinsics[:, :, 1] *= height
 
-        render_colors, render_alphas, meta = rasterization(
+        raster_args = dict(
             means=means,
             quats=quats,
             scales=scales,
@@ -86,6 +88,18 @@ class GSplatDecoderSplattingCUDA(Decoder[GSplatDecoderSplattingCUDACfg]):
             render_mode="RGB+ED",
             covars=covars,
         )
+        capture = means.is_cuda and os.environ.get("RESPLAT_PROFILE_CAPTURE") == "1"
+        with torch.cuda.nvtx.range("resplat/gsplat_rasterization") if capture else nullcontext():
+            render_colors, render_alphas, meta = rasterization(**raster_args)
+        fixture = os.environ.get("RESPLAT_PROFILE_RASTER_FIXTURE")
+        if fixture and not getattr(self, "_wrote_raster_fixture", False):
+            torch.save({
+                "args": {key: val.detach().cpu() if torch.is_tensor(val) else val
+                         for key, val in raster_args.items()},
+                "visible_pairs": meta["gaussian_ids"].numel() if meta.get("gaussian_ids") is not None else None,
+                "intersections": meta["isect_ids"].numel(),
+            }, fixture)
+            self._wrote_raster_fixture = True
 
         color = render_colors[..., :3].permute(0, 1, 4, 2, 3)  # [B, V, 3, H, W]
         depth = render_colors[..., -1]  # [B, V, H, W]

@@ -13,6 +13,7 @@ def local_knn_query(
     num_neighbor_views: int = 4,
     cross_view_radius: int = 3,
     query_chunk_size: int = 4096,
+    fused_candidates: bool = False,
 ) -> Tensor:
     """Local KNN for structured point clouds from multi-view depth maps.
 
@@ -39,7 +40,7 @@ def local_knn_query(
             indices[start:start + N] = local_knn_query(
                 k, points_3d[start:start + N], extrinsics[scene], intrinsics[scene],
                 v, h, w, spatial_radius, num_neighbor_views, cross_view_radius,
-                query_chunk_size,
+                query_chunk_size, fused_candidates,
             ).add_(start)
         return indices
 
@@ -111,28 +112,42 @@ def local_knn_query(
     target_base = neighbor_views * hw
     candidate_count = dr.numel() + nv * C
     result = torch.empty((N, k), device=device, dtype=torch.int32)
+    if fused_candidates and points_3d.is_cuda and points_3d.dtype == torch.float32:
+        from .local_knn_candidates import candidate_distances
+
+        points_3d = points_3d.contiguous()
+        proj_row, proj_col = proj_row.contiguous(), proj_col.contiguous()
+        valid_z, target_base = valid_z.contiguous(), target_base.contiguous()
+    else:
+        fused_candidates = False
     for start in range(0, N, query_chunk_size):
         end = min(start + query_chunk_size, N)
         query = torch.arange(start, end, device=device)
-        source_view = query // hw
-        row = query % hw // w
-        col = query % w
-        nb_row = row[:, None] + dr
-        nb_col = col[:, None] + dc
-        spatial_valid = (nb_row >= 0) & (nb_row < h) & (nb_col >= 0) & (nb_col < w)
-        spatial_indices = source_view[:, None] * hw + nb_row.clamp_(0, h - 1) * w + nb_col.clamp_(0, w - 1)
+        if fused_candidates:
+            indices, sq_dist = candidate_distances(
+                points_3d, proj_row, proj_col, valid_z, target_base,
+                start, end, h, w, sr, cr,
+            )
+        else:
+            source_view = query // hw
+            row = query % hw // w
+            col = query % w
+            nb_row = row[:, None] + dr
+            nb_col = col[:, None] + dc
+            spatial_valid = (nb_row >= 0) & (nb_row < h) & (nb_col >= 0) & (nb_col < w)
+            spatial_indices = source_view[:, None] * hw + nb_row.clamp_(0, h - 1) * w + nb_col.clamp_(0, w - 1)
 
-        nb_r = proj_row[start:end, :, None] + cv_dr
-        nb_c = proj_col[start:end, :, None] + cv_dc
-        cross_valid = ((nb_r >= 0) & (nb_r < h) & (nb_c >= 0) & (nb_c < w)
-                       & valid_z[start:end, :, None])
-        cross_indices = target_base[source_view, :, None] + nb_r.clamp_(0, h - 1) * w + nb_c.clamp_(0, w - 1)
-        indices = torch.cat((spatial_indices, cross_indices.flatten(1)), dim=1)
-        valid = torch.cat((spatial_valid, cross_valid.flatten(1)), dim=1)
+            nb_r = proj_row[start:end, :, None] + cv_dr
+            nb_c = proj_col[start:end, :, None] + cv_dc
+            cross_valid = ((nb_r >= 0) & (nb_r < h) & (nb_c >= 0) & (nb_c < w)
+                           & valid_z[start:end, :, None])
+            cross_indices = target_base[source_view, :, None] + nb_r.clamp_(0, h - 1) * w + nb_c.clamp_(0, w - 1)
+            indices = torch.cat((spatial_indices, cross_indices.flatten(1)), dim=1)
+            valid = torch.cat((spatial_valid, cross_valid.flatten(1)), dim=1)
 
-        candidate_pos = points_3d[indices]
-        sq_dist = ((candidate_pos - points_3d[start:end, None]) ** 2).sum(dim=-1)
-        sq_dist.masked_fill_(~valid, float("inf"))
+            candidate_pos = points_3d[indices]
+            sq_dist = ((candidate_pos - points_3d[start:end, None]) ** 2).sum(dim=-1)
+            sq_dist.masked_fill_(~valid, float("inf"))
         topk_dist, topk_local = sq_dist.topk(min(k, candidate_count), largest=False)
         neighbors = indices.gather(1, topk_local)
         neighbors = torch.where(topk_dist == float("inf"), query[:, None], neighbors)

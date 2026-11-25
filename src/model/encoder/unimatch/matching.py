@@ -40,37 +40,44 @@ def warp_with_pose_depth_candidates(
     assert pose.size(1) == pose.size(2) == 4
     assert depth.dim() == 4
 
-    b, d, h, w = depth.size()
-    c = feature1.size(1)
+    grid = project_depth_grid(intrinsics, pose, depth, clamp_min_depth)
+    return sample_projected_features(feature1, grid, grid_sample_disable_cudnn)
 
-    with torch.no_grad():
-        # pixel coordinates
-        grid = coords_grid(
-            b, h, w, homogeneous=True, device=depth.device
-        )  # [B, 3, H, W]
-        # back project to 3D and transform viewpoint
-        points = torch.inverse(intrinsics).bmm(grid.view(b, 3, -1))  # [B, 3, H*W]
-        points = torch.bmm(pose[:, :3, :3], points).unsqueeze(2).repeat(
-            1, 1, d, 1
-        ) * depth.view(
-            b, 1, d, h * w
-        )  # [B, 3, D, H*W]
-        points = points + pose[:, :3, -1:].unsqueeze(-1)  # [B, 3, D, H*W]
-        # reproject to 2D image plane
-        points = torch.bmm(intrinsics, points.view(b, 3, -1)).view(
-            b, 3, d, h * w
-        )  # [B, 3, D, H*W]
-        pixel_coords = points[:, :2] / points[:, -1:].clamp(
-            min=clamp_min_depth
-        )  # [B, 2, D, H*W]
 
-        # normalize to [-1, 1]
-        x_grid = 2 * pixel_coords[:, 0] / (w - 1) - 1
-        y_grid = 2 * pixel_coords[:, 1] / (h - 1) - 1
+@torch.no_grad()
+def project_depth_grid(intrinsics, pose, depth, clamp_min_depth=1e-3):
+    b, d, h, w = depth.shape
+    # pixel coordinates
+    grid = coords_grid(
+        b, h, w, homogeneous=True, device=depth.device
+    )  # [B, 3, H, W]
+    # back project to 3D and transform viewpoint
+    points = torch.inverse(intrinsics).bmm(grid.view(b, 3, -1))  # [B, 3, H*W]
+    points = torch.bmm(pose[:, :3, :3], points).unsqueeze(2).repeat(
+        1, 1, d, 1
+    ) * depth.view(
+        b, 1, d, h * w
+    )  # [B, 3, D, H*W]
+    points = points + pose[:, :3, -1:].unsqueeze(-1)  # [B, 3, D, H*W]
+    # reproject to 2D image plane
+    points = torch.bmm(intrinsics, points.view(b, 3, -1)).view(
+        b, 3, d, h * w
+    )  # [B, 3, D, H*W]
+    pixel_coords = points[:, :2] / points[:, -1:].clamp(
+        min=clamp_min_depth
+    )  # [B, 2, D, H*W]
 
-        grid = torch.stack([x_grid, y_grid], dim=-1)  # [B, D, H*W, 2]
+    # normalize to [-1, 1]
+    x_grid = 2 * pixel_coords[:, 0] / (w - 1) - 1
+    y_grid = 2 * pixel_coords[:, 1] / (h - 1) - 1
 
-    # sample features
+    grid = torch.stack([x_grid, y_grid], dim=-1)  # [B, D, H*W, 2]
+    return grid
+
+
+def sample_projected_features(feature1, grid, grid_sample_disable_cudnn=False):
+    b, c, h, w = feature1.shape
+    d = grid.shape[1]
     # ref: https://github.com/pytorch/pytorch/issues/88380
     # hardcoded workaround
     if feature1.numel() > 1000000:

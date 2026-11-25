@@ -1,6 +1,8 @@
 # Core settings
 name: resplat
 num_depth_candidates: 128
+cost_volume_depth_chunk: null
+depth_activation_checkpointing: false
 
 gaussian_adapter:
   gaussian_scale_min: 0.5
@@ -51,6 +53,9 @@ attn_proj_channels: 64
 knn_samples: 16
 num_blocks: 6
 init_use_local_knn: false
+init_fused_local_attention_rows: null
+init_fused_knn_candidates: false
+init_channels_last_conv: false
 init_local_knn_spatial_radius: 3
 init_local_knn_num_neighbor_views: 32
 init_local_knn_cross_view_radius: 3

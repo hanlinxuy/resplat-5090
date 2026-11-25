@@ -161,6 +161,23 @@ def train(cfg_dict: DictConfig):
     for cb in callbacks:
         cb.CHECKPOINT_EQUALS_CHAR = '_'
 
+    profile_path = os.environ.get("RESPLAT_PROFILE_JSON")
+    if profile_path and cfg.mode == "train":
+        from src.misc.single_gpu_profile import SingleGPUProfile
+
+        callbacks.append(SingleGPUProfile(
+            profile_path,
+            int(os.environ.get("RESPLAT_PROFILE_WARMUP", "10")),
+            int(os.environ.get("RESPLAT_PROFILE_SAMPLES", "20")),
+            capture=os.environ.get("RESPLAT_PROFILE_CAPTURE") == "1",
+        ))
+
+    quality_fixture = os.environ.get("RESPLAT_SYNTHETIC_QUALITY_FIXTURE")
+    if quality_fixture and cfg.mode == "train":
+        from benchmarks.synthetic_view_quality import SyntheticViewQuality
+
+        callbacks.append(SyntheticViewQuality(quality_fixture, output_dir))
+
     # Prepare the checkpoint for loading.
     if cfg.checkpointing.resume:
         if not os.path.exists(output_dir / 'checkpoints'):
@@ -188,14 +205,21 @@ def train(cfg_dict: DictConfig):
         strategy=dist_strategy if torch.cuda.device_count() > 1 else "auto",
         callbacks=callbacks,
         val_check_interval=cfg.trainer.val_check_interval,
+        limit_val_batches=0 if profile_path and cfg.mode == "train" else 1.0,
         enable_progress_bar=cfg.mode == "test",
         gradient_clip_val=cfg.trainer.gradient_clip_val,
         max_steps=cfg.trainer.max_steps,
+        accumulate_grad_batches=cfg.trainer.accumulate_grad_batches,
         num_sanity_val_steps=cfg.trainer.num_sanity_val_steps,
         num_nodes=cfg.trainer.num_nodes,
         plugins=LightningEnvironment() if cfg.use_plugins else None,
     )
-    torch.manual_seed(cfg_dict.seed + trainer.global_rank)
+    if profile_path:
+        from pytorch_lightning import seed_everything
+
+        seed_everything(cfg_dict.seed + trainer.global_rank, workers=True)
+    else:
+        torch.manual_seed(cfg_dict.seed + trainer.global_rank)
 
     encoder, encoder_visualizer = get_encoder(cfg.model.encoder)
 
@@ -353,6 +377,21 @@ def train(cfg_dict: DictConfig):
 
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
-    torch.set_float32_matmul_precision('high')
+    matmul_precision = os.environ.get("RESPLAT_FP32_MATMUL_PRECISION", "high")
+    torch.set_float32_matmul_precision(matmul_precision)
+    if matmul_precision == "highest":
+        torch.backends.cudnn.allow_tf32 = False
+
+    if os.environ.get("RESPLAT_STRICT_ACCUMULATION") == "1":
+        torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False
+        torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False
+
+    memory_limit = os.environ.get("RESPLAT_CUDA_ALLOCATOR_LIMIT_GIB")
+    if memory_limit is not None:
+        device_memory = torch.cuda.get_device_properties(0).total_memory
+        fraction = float(memory_limit) * 2**30 / device_memory
+        if not 0 < fraction <= 1:
+            raise ValueError("RESPLAT_CUDA_ALLOCATOR_LIMIT_GIB must be within the device capacity")
+        torch.cuda.set_per_process_memory_fraction(fraction, 0)
 
     train()

@@ -73,6 +73,7 @@ class OptimizerCfg:
     weight_decay: float
     warm_up_ratio: float
     adamw_8bit: bool
+    fused_adamw: bool
 
 
 @dataclass
@@ -192,6 +193,7 @@ class ModelWrapper(LightningModule):
     def training_step(self, batch, batch_idx):
         batch: BatchedExample = self.data_shim(batch)
         b, v, _, h, w = batch["context"]["image"].shape
+        self.profile_training_shape = (b, v, batch["target"]["image"].shape[1], h, w)
         # Run the model.
         if self.train_cfg.train_window_size is not None:
             assert self.train_cfg.train_window_size > 0
@@ -1899,6 +1901,9 @@ class ModelWrapper(LightningModule):
                 )
 
     def configure_optimizers(self):
+        fused = True if self.optimizer_cfg.fused_adamw else None
+        if fused and self.optimizer_cfg.adamw_8bit:
+            raise ValueError("fused AdamW requires the regular precision optimizer")
         if self.optimizer_cfg.lr_depth > 0:
             pretrained_params = []
             new_params = []
@@ -1930,6 +1935,7 @@ class ModelWrapper(LightningModule):
                         {"params": new_params, "lr": self.optimizer_cfg.lr},
                     ],
                     weight_decay=self.optimizer_cfg.weight_decay,
+                    fused=fused,
                 )
 
             scheduler = torch.optim.lr_scheduler.OneCycleLR(
@@ -1972,6 +1978,7 @@ class ModelWrapper(LightningModule):
                         {"params": new_params, "lr": self.optimizer_cfg.lr},
                     ],
                     weight_decay=self.optimizer_cfg.weight_decay,
+                    fused=fused,
                 )
 
             scheduler = torch.optim.lr_scheduler.OneCycleLR(
@@ -1995,6 +2002,7 @@ class ModelWrapper(LightningModule):
                     self.parameters(),
                     lr=self.optimizer_cfg.lr,
                     weight_decay=self.optimizer_cfg.weight_decay,
+                    fused=fused,
                 )
 
             scheduler = torch.optim.lr_scheduler.OneCycleLR(

@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.utils.checkpoint import checkpoint
 
 from .backbone import CNNEncoder
 from .vit_fpn import ViTFeaturePyramid
@@ -39,6 +40,7 @@ class MultiViewUniMatch(nn.Module):
         no_upsample_depth=False,
         use_amp=False,
         return_raw_mono_features=False,
+        cost_volume_depth_chunk=None,
         max_mono_vit_input_size=560,  # constrain the input resolution to vit
         use_checkpointing=False,
         **kwargs,
@@ -54,6 +56,10 @@ class MultiViewUniMatch(nn.Module):
         self.bilinear_upsample_depth = bilinear_upsample_depth
         self.no_upsample_depth = no_upsample_depth
         self.return_raw_mono_features = return_raw_mono_features
+        if cost_volume_depth_chunk is not None and cost_volume_depth_chunk < 1:
+            raise ValueError("cost_volume_depth_chunk must be positive")
+        self.cost_volume_depth_chunk = cost_volume_depth_chunk
+        self.use_checkpointing = use_checkpointing
         self.max_mono_vit_input_size = max_mono_vit_input_size
 
         self.use_amp = use_amp
@@ -292,7 +298,9 @@ class MultiViewUniMatch(nn.Module):
         # list of features, resolution low to high
         # list of [BV, C, H, W]
         with torch.amp.autocast(device_type='cuda', enabled=self.use_amp, dtype=torch.bfloat16):
-            features_list_cnn = self.extract_feature(images)
+            recompute = self.use_checkpointing and self.training and torch.is_grad_enabled()
+            features_list_cnn = (checkpoint(self.extract_feature, images, use_reentrant=False)
+                                 if recompute else self.extract_feature(images))
         features_list_cnn_all_scales = features_list_cnn
         features_list_cnn = features_list_cnn[: self.num_scales]
         results_dict.update({"features_cnn_all_scales": features_list_cnn_all_scales})
@@ -520,53 +528,69 @@ class MultiViewUniMatch(nn.Module):
                     depth_range_max - depth_range_min
                 )  # [BV, D, H, W]
 
-            if scale_idx == 0:
-                # [BV*(V-1), D, H, W]
-                depth_candidates_curr = (
-                    depth_candidates.unsqueeze(1)
-                    .repeat(1, tgt_features.size(1), 1, h, w)
-                    .view(-1, num_depth_candidates, h, w)
-                )
+            intrinsics_input = torch.stack(intrinsics_curr, dim=1).view(-1, 3, 3)
+            intrinsics_input = intrinsics_input.unsqueeze(1).expand(-1, tgt_features.size(1), -1, -1)
+
+            if self.cost_volume_depth_chunk is not None:
+                from .fused_cost_volume import cost_volume_chunk
+
+                ref_fp32 = ref_features.float().contiguous()
+                tgt_fp32 = tgt_features.float().contiguous()
+                intrinsics_flat = intrinsics_input.reshape(-1, 3, 3)
+                pose_flat = pose_curr.reshape(-1, 4, 4)
+                parts = []
+                for candidates in depth_candidates.split(self.cost_volume_depth_chunk, dim=1):
+                    # Expand only this depth group over neighboring views and pixels.
+                    candidates = candidates.float()
+                    depths = candidates.exp() if self.sample_log_depth else candidates.reciprocal()
+                    depths = depths[:, None].expand(-1, tgt_fp32.size(1), -1, h, w)
+                    depths = depths.reshape(-1, candidates.size(1), h, w).contiguous()
+                    parts.append(cost_volume_chunk(
+                        ref_fp32, tgt_fp32, intrinsics_flat, pose_flat, depths,
+                        self.grid_sample_disable_cudnn,
+                    ))
+                cost_volume = torch.cat(parts, dim=1)
             else:
-                depth_candidates_curr = (
-                    depth_candidates.unsqueeze(1)
-                    .repeat(1, tgt_features.size(1), 1, 1, 1)
-                    .view(-1, num_depth_candidates, h, w)
+                if scale_idx == 0:
+                    # [BV*(V-1), D, H, W]
+                    depth_candidates_curr = (
+                        depth_candidates.unsqueeze(1)
+                        .repeat(1, tgt_features.size(1), 1, h, w)
+                        .view(-1, num_depth_candidates, h, w)
+                    )
+                else:
+                    depth_candidates_curr = (
+                        depth_candidates.unsqueeze(1)
+                        .repeat(1, tgt_features.size(1), 1, 1, 1)
+                        .view(-1, num_depth_candidates, h, w)
+                    )
+
+                ref_features = ref_features.float()
+                tgt_features = tgt_features.float()
+                depth_candidates_curr = depth_candidates_curr.float()
+
+                warped_tgt_features = warp_with_pose_depth_candidates(
+                    rearrange(tgt_features, "b v ... -> (b v) ..."),
+                    rearrange(intrinsics_input, "b v ... -> (b v) ..."),
+                    rearrange(pose_curr, "b v ... -> (b v) ..."),
+                    torch.exp(depth_candidates_curr) if self.sample_log_depth else 1.0 / depth_candidates_curr,  # convert inverse/log depth to depth
+                    grid_sample_disable_cudnn=self.grid_sample_disable_cudnn,
+                )  # [BV*(V-1), C, D, H, W]
+
+                # ref: [BV, C, H, W]
+                # warped: [BV*(V-1), C, D, H, W] -> [BV, V-1, C, D, H, W]
+                warped_tgt_features = rearrange(
+                    warped_tgt_features,
+                    "(b v) ... -> b v ...",
+                    b=b_new,
+                    v=tgt_features.size(1),
                 )
-
-            intrinsics_input = torch.stack(intrinsics_curr, dim=1).view(
-                -1, 3, 3
-            )  # [BV, 3, 3]
-            intrinsics_input = intrinsics_input.unsqueeze(1).repeat(
-                1, tgt_features.size(1), 1, 1
-            )  # [BV, V-1, 3, 3]
-
-            ref_features = ref_features.float()
-            tgt_features = tgt_features.float()
-            depth_candidates_curr = depth_candidates_curr.float()
-
-            warped_tgt_features = warp_with_pose_depth_candidates(
-                rearrange(tgt_features, "b v ... -> (b v) ..."),
-                rearrange(intrinsics_input, "b v ... -> (b v) ..."),
-                rearrange(pose_curr, "b v ... -> (b v) ..."),
-                torch.exp(depth_candidates_curr) if self.sample_log_depth else 1.0 / depth_candidates_curr,  # convert inverse/log depth to depth
-                grid_sample_disable_cudnn=self.grid_sample_disable_cudnn,
-            )  # [BV*(V-1), C, D, H, W]
-
-            # ref: [BV, C, H, W]
-            # warped: [BV*(V-1), C, D, H, W] -> [BV, V-1, C, D, H, W]
-            warped_tgt_features = rearrange(
-                warped_tgt_features,
-                "(b v) ... -> b v ...",
-                b=b_new,
-                v=tgt_features.size(1),
-            )
-            # [BV, V-1, D, H, W] -> [BV, D, H, W]
-            # average cross other views
-            cost_volume = (
-                (ref_features.unsqueeze(-3).unsqueeze(1) * warped_tgt_features).sum(2)
-                / (c**0.5)
-            ).mean(1)
+                # [BV, V-1, D, H, W] -> [BV, D, H, W]
+                # average cross other views
+                cost_volume = (
+                    (ref_features.unsqueeze(-3).unsqueeze(1) * warped_tgt_features).sum(2)
+                    / (c**0.5)
+                ).mean(1)
 
             # regressor
             features_cnn = features_list_cnn[scale_idx]  # [BV, C, H, W]
@@ -578,9 +602,9 @@ class MultiViewUniMatch(nn.Module):
             )
 
             with torch.amp.autocast(device_type='cuda', enabled=self.use_amp, dtype=torch.bfloat16):
-                out = self.regressor[scale_idx](concat) + self.regressor_residual[
-                    scale_idx
-                ](concat)
+                regressor = self.regressor[scale_idx]
+                out = (checkpoint(regressor, concat, use_reentrant=False) if recompute else regressor(concat))
+                out = out + self.regressor_residual[scale_idx](concat)
 
             out = out.float()
 
@@ -613,15 +637,17 @@ class MultiViewUniMatch(nn.Module):
                     residual_depth = 0
                 else:
                     with torch.amp.autocast(device_type='cuda', enabled=self.use_amp, dtype=torch.bfloat16):
-                        residual_depth = self.upsampler(
-                            mono_intermediate_features,
-                            # resolution high to low
+                        upsampler_args = dict(
                             cnn_features=features_list_cnn_all_scales[::-1],
-                            mv_features=(
-                                features_mv if self.num_scales == 1 else features_list_mv[::-1]
-                            ),
+                            mv_features=features_mv if self.num_scales == 1 else features_list_mv[::-1],
                             depth=depth,
                         )
+                        if recompute:
+                            residual_depth = checkpoint(
+                                self.upsampler, mono_intermediate_features, use_reentrant=False, **upsampler_args,
+                            )
+                        else:
+                            residual_depth = self.upsampler(mono_intermediate_features, **upsampler_args)
 
                 if self.no_upsample_depth:
                     depth_preds.append(depth)

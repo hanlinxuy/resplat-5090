@@ -1,3 +1,5 @@
+from contextlib import nullcontext
+
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
@@ -13,7 +15,12 @@ class PerceptualLoss(nn.Module):
     def __init__(self):
         super().__init__()
         self.vgg = self._build_vgg()
-        self._load_weights()
+        if os.environ.get("RESPLAT_SYNTHETIC_RANDOM_WEIGHTS") != "1":
+            self._load_weights()
+        self.bf16_autocast = os.environ.get("RESPLAT_PERCEPTUAL_BF16") == "1"
+        self.channels_last = os.environ.get("RESPLAT_PERCEPTUAL_CHANNELS_LAST") == "1"
+        if self.channels_last:
+            self.vgg.to(memory_format=torch.channels_last)
         self._setup_feature_blocks()
         
     def _build_vgg(self):
@@ -86,11 +93,14 @@ class PerceptualLoss(nn.Module):
         """Convert images to VGG input format."""
         # VGG mean values for ImageNet
         mean = torch.tensor([123.6800, 116.7790, 103.9390]).reshape(1, 3, 1, 1).to(images.device)
-        return images * 255.0 - mean
+        images = images * 255.0 - mean
+        if self.channels_last:
+            images = images.contiguous(memory_format=torch.channels_last)
+        return images
     
     @staticmethod
     def _compute_error(real, fake):
-        return torch.mean(torch.abs(real - fake))
+        return torch.mean(torch.abs(real.float() - fake.float()))
     
     def forward(self, pred_img, target_img, return_feature=False):
         """Compute perceptual loss between prediction and target."""
@@ -99,8 +109,15 @@ class PerceptualLoss(nn.Module):
         pred_img_p = self._preprocess_images(pred_img)
         
         # Extract features
-        target_features = self._extract_features(target_img_p)
-        pred_features = self._extract_features(pred_img_p)
+        capture = pred_img_p.is_cuda and os.environ.get("RESPLAT_PROFILE_CAPTURE") == "1"
+        with torch.cuda.nvtx.range("resplat/perceptual_vgg") if capture else nullcontext():
+            if self.bf16_autocast and pred_img_p.is_cuda:
+                with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+                    target_features = self._extract_features(target_img_p)
+                    pred_features = self._extract_features(pred_img_p)
+            else:
+                target_features = self._extract_features(target_img_p)
+                pred_features = self._extract_features(pred_img_p)
         # for x in target_features:
         #     print(x.shape)
 

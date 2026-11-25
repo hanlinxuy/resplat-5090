@@ -34,6 +34,8 @@ class EncoderReSplatCfg:
     # Core settings
     name: Literal["resplat"]
     num_depth_candidates: int
+    cost_volume_depth_chunk: int | None
+    depth_activation_checkpointing: bool
     visualizer: EncoderVisualizerReSplatCfg
     gaussian_adapter: GaussianAdapterCfg
 
@@ -68,6 +70,9 @@ class EncoderReSplatCfg:
     knn_samples: int
     num_blocks: int
     init_use_local_knn: bool
+    init_fused_local_attention_rows: int | None
+    init_fused_knn_candidates: bool
+    init_channels_last_conv: bool
     init_local_knn_spatial_radius: int
     init_local_knn_num_neighbor_views: int
     init_local_knn_cross_view_radius: int
@@ -125,7 +130,7 @@ def _init_weights(m):
 
 def create_init_point_transformer(cfg, channels):
     """Create KNN-based PlainPointTransformer for initial Gaussian prediction."""
-    return PlainPointTransformer(
+    point_transformer = PlainPointTransformer(
         channels, cfg.knn_samples,
         num_blocks=cfg.num_blocks,
         attn_proj_channels=cfg.attn_proj_channels,
@@ -137,6 +142,19 @@ def create_init_point_transformer(cfg, channels):
         local_knn_num_neighbor_views=cfg.init_local_knn_num_neighbor_views,
         local_knn_cross_view_radius=cfg.init_local_knn_cross_view_radius,
     )
+    rows = cfg.init_fused_local_attention_rows
+    if rows is not None:
+        if (rows not in (1, 2, 4, 8) or not cfg.init_use_local_knn
+                or not cfg.pt_head_amp or cfg.knn_samples != 16 or cfg.attn_proj_channels != 64):
+            raise ValueError("fused local attention requires local KNN, BF16 autocast, K=16 and D=64")
+        for block in point_transformer.blocks:
+            block.attn.fused_local_rows = rows
+    point_transformer.fused_knn_candidates = cfg.init_fused_knn_candidates
+    if cfg.init_channels_last_conv:
+        for block in point_transformer.mv_blocks:
+            block.channels_last_conv = True
+            block.conv.to(memory_format=torch.channels_last)
+    return point_transformer
 
 
 class EncoderReSplat(Encoder[EncoderReSplatCfg]):
@@ -148,6 +166,8 @@ class EncoderReSplat(Encoder[EncoderReSplatCfg]):
             upsample_factor=cfg.upsample_factor,
             lowest_feature_resolution=cfg.lowest_feature_resolution,
             num_depth_candidates=cfg.num_depth_candidates,
+            cost_volume_depth_chunk=cfg.cost_volume_depth_chunk,
+            use_checkpointing=cfg.depth_activation_checkpointing,
             vit_type=cfg.monodepth_vit_type,
             unet_channels=cfg.depth_unet_channels,
             grid_sample_disable_cudnn=cfg.grid_sample_disable_cudnn,
@@ -810,6 +830,7 @@ class EncoderReSplat(Encoder[EncoderReSplatCfg]):
         num_refine = self.cfg.num_refine
         if self.training and self.cfg.train_min_refine > 0 and self.cfg.train_max_refine > 0:
             num_refine = np.random.randint(self.cfg.train_min_refine, self.cfg.train_max_refine + 1)
+            self.profile_refinement_iterations = int(num_refine)
 
         tmp_state = rearrange(state, "b n c -> (b n) c")
         init_state = tmp_state
