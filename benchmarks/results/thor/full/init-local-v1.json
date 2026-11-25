@@ -1,0 +1,83 @@
+{
+  "gpu": "NVIDIA Thor",
+  "capability": [
+    11,
+    0
+  ],
+  "sm_count": 20,
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "cuda_visible_devices": "0",
+  "fp32_matmul_precision": "highest",
+  "cudnn_tf32": false,
+  "synthetic_random_weights": true,
+  "total_params": 209355313,
+  "trainable_params": 209355313,
+  "peak_allocated_bytes": 30586770944,
+  "peak_reserved_bytes": 39189479424,
+  "median": {
+    "forward_loss_ms": 1506.7296142578125,
+    "backward_ms": 1195.312255859375,
+    "update_ms": 90.29203033447266,
+    "cuda_step_ms": 2792.32568359375,
+    "wall_batch_ms": 2792.409514004248,
+    "wall_cadence_ms": 2937.1294130032766
+  },
+  "samples": [
+    {
+      "step": 3,
+      "scenes": 1,
+      "forward_loss_ms": 1505.0562744140625,
+      "backward_ms": 1194.48583984375,
+      "update_ms": 90.04918670654297,
+      "cuda_step_ms": 2789.59130859375,
+      "wall_batch_ms": 2789.7479320090497,
+      "wall_cadence_ms": null,
+      "loss": 0.09770031273365021
+    },
+    {
+      "step": 4,
+      "scenes": 1,
+      "forward_loss_ms": 1510.2073974609375,
+      "backward_ms": 1198.831298828125,
+      "update_ms": 90.20995330810547,
+      "cuda_step_ms": 2799.24853515625,
+      "wall_batch_ms": 2799.3243829987478,
+      "wall_cadence_ms": 2950.682426991989,
+      "loss": 0.0356186181306839
+    },
+    {
+      "step": 5,
+      "scenes": 1,
+      "forward_loss_ms": 1508.1480712890625,
+      "backward_ms": 1197.4588623046875,
+      "update_ms": 90.29203033447266,
+      "cuda_step_ms": 2795.899169921875,
+      "wall_batch_ms": 2795.970769991982,
+      "wall_cadence_ms": 2950.4440820019227,
+      "loss": 0.033666130155324936
+    },
+    {
+      "step": 6,
+      "scenes": 1,
+      "forward_loss_ms": 1506.4857177734375,
+      "backward_ms": 1195.312255859375,
+      "update_ms": 90.5278091430664,
+      "cuda_step_ms": 2792.32568359375,
+      "wall_batch_ms": 2792.409514004248,
+      "wall_cadence_ms": 2923.8147440046305,
+      "loss": 0.04161565378308296
+    },
+    {
+      "step": 7,
+      "scenes": 1,
+      "forward_loss_ms": 1506.7296142578125,
+      "backward_ms": 1188.022705078125,
+      "update_ms": 90.40351867675781,
+      "cuda_step_ms": 2785.15576171875,
+      "wall_batch_ms": 2785.2265309920767,
+      "wall_cadence_ms": 2921.488424995914,
+      "loss": 0.025059126317501068
+    }
+  ]
+}

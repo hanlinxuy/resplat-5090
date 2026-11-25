@@ -1,0 +1,84 @@
+{
+  "held_out": {
+    "before": {
+      "steps_in_run": 0,
+      "groups": 12,
+      "metrics": {
+        "center_ssim": 0.7884843101104101,
+        "foreground_psnr": 22.098318735758465,
+        "gaussian_count": 802816,
+        "half_resolution_gt_ratio": 0.39047206193208694,
+        "highpass_ratio": 0.3548111083606879,
+        "mse": 0.0025245512903590375,
+        "psnr": 27.314645290374756,
+        "ssim": 0.8921577682097753
+      }
+    },
+    "step-216": {
+      "steps_in_run": 216,
+      "groups": 12,
+      "metrics": {
+        "center_ssim": 0.7810144027074178,
+        "foreground_psnr": 21.766562779744465,
+        "gaussian_count": 802816,
+        "half_resolution_gt_ratio": 0.39047206193208694,
+        "highpass_ratio": 0.35317545880873996,
+        "mse": 0.0025705600661846497,
+        "psnr": 27.0845201810201,
+        "ssim": 0.8884049008289973
+      }
+    },
+    "step-432": {
+      "steps_in_run": 432,
+      "groups": 12,
+      "metrics": {
+        "center_ssim": 0.8034473260243734,
+        "foreground_psnr": 23.1000173886617,
+        "gaussian_count": 802816,
+        "half_resolution_gt_ratio": 0.39047206193208694,
+        "highpass_ratio": 0.42024626582860947,
+        "mse": 0.0020024663826916367,
+        "psnr": 27.845786571502686,
+        "ssim": 0.8978376388549805
+      }
+    },
+    "step-1080": {
+      "steps_in_run": 1080,
+      "groups": 12,
+      "metrics": {
+        "center_ssim": 0.8036180784304937,
+        "foreground_psnr": 22.83461586634318,
+        "gaussian_count": 802816,
+        "half_resolution_gt_ratio": 0.39047206193208694,
+        "highpass_ratio": 0.4369451602300008,
+        "mse": 0.0026783963645963618,
+        "psnr": 27.276694933573406,
+        "ssim": 0.8959353665510813
+      }
+    },
+    "after": {
+      "steps_in_run": 2160,
+      "groups": 12,
+      "metrics": {
+        "center_ssim": 0.8106868068377177,
+        "foreground_psnr": 23.175846099853516,
+        "gaussian_count": 802816,
+        "half_resolution_gt_ratio": 0.39047206193208694,
+        "highpass_ratio": 0.42781172941128415,
+        "mse": 0.0021696199740593634,
+        "psnr": 28.02490695317586,
+        "ssim": 0.9025510400533676
+      }
+    }
+  },
+  "timing_median": {
+    "forward_loss_ms": 216.29491424560547,
+    "backward_ms": 546.1867370605469,
+    "update_ms": 21.48812770843506,
+    "cuda_step_ms": 784.4992065429688,
+    "wall_batch_ms": 785.1423458196223,
+    "wall_cadence_ms": 800.2324420958757
+  },
+  "max_gpu_sample_mib": 14201,
+  "sampled_elapsed_seconds": 1840.672
+}

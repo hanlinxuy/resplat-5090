@@ -1,0 +1,21 @@
+{
+  "max_absolute_loss_diff": 0.007153987884521484,
+  "aligned_microbatches": 3,
+  "sampled_relative_l2": {
+    "encoder.pt.blocks.0.attn.qkv.weight": {
+      "parameter": 0.0
+    },
+    "encoder.pt.mv_blocks.0.conv.weight": {
+      "parameter": 0.0
+    },
+    "encoder.gaussian_head.0.weight": {
+      "parameter": 0.0
+    },
+    "encoder.update_proj.weight": {
+      "parameter": 0.0004802953483982095,
+      "grad": 0.018454429381966463,
+      "exp_avg": 0.02608209313370856,
+      "exp_avg_sq": 0.016256295034400698
+    }
+  }
+}

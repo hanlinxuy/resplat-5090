@@ -1,0 +1,41 @@
+{
+  "held_out": {
+    "before": {
+      "steps_in_run": 0,
+      "groups": 12,
+      "metrics": {
+        "gaussian_count": 802816,
+        "psnr": 24.838091055552166,
+        "ssim": 0.8497118353843689,
+        "mse": 0.007037404876124735,
+        "foreground_psnr": 21.44767697652181,
+        "center_ssim": 0.7545373986164728,
+        "highpass_ratio": 0.6341003204385439,
+        "half_resolution_gt_ratio": 0.39047206193208694
+      }
+    },
+    "after": {
+      "steps_in_run": 216,
+      "groups": 12,
+      "metrics": {
+        "gaussian_count": 802816,
+        "psnr": 27.314645290374756,
+        "ssim": 0.8921577682097753,
+        "mse": 0.0025245512903590375,
+        "foreground_psnr": 22.098318735758465,
+        "center_ssim": 0.7884843101104101,
+        "highpass_ratio": 0.3548111083606879,
+        "half_resolution_gt_ratio": 0.39047206193208694
+      }
+    }
+  },
+  "timing_median": {
+    "forward_loss_ms": 217.20474243164062,
+    "backward_ms": 547.979248046875,
+    "update_ms": 21.667327880859375,
+    "cuda_step_ms": 786.7387084960938,
+    "wall_batch_ms": 787.3371534515172,
+    "wall_cadence_ms": 802.8836511075497
+  },
+  "max_gpu_sample_mib": 14195
+}

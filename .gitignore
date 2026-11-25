@@ -175,3 +175,13 @@ CLAUDE.md
 debug*
 doc/
 notebooks/
+
+# Local training and GPU profiler artifacts.
+/runs/
+/pretrained/
+/datasets/
+*.ckpt
+*.pth
+*.nsys-rep
+*.ncu-rep
+*.sqlite

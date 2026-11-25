@@ -1,0 +1,217 @@
+{
+  "resplat/knn": {
+    "median_gpu_span_ms": 32.95664,
+    "median_tensor_active_pct": 0.01995739614297401,
+    "steps": [
+      {
+        "gpu_span_ms": 37.21296,
+        "tensor_active_pct": 0.01876675603217158
+      },
+      {
+        "gpu_span_ms": 32.86208,
+        "tensor_active_pct": 0.0182370820668693
+      },
+      {
+        "gpu_span_ms": 33.0512,
+        "tensor_active_pct": 0.021148036253776436
+      },
+      {
+        "gpu_span_ms": 32.81632,
+        "tensor_active_pct": 0.021341463414634148
+      }
+    ],
+    "top_kernels_mean_ms": [
+      [
+        "gatherTopK",
+        10.157824
+      ],
+      [
+        "vectorized_elementwise_kernel",
+        7.026368000000025
+      ],
+      [
+        "elementwise_kernel",
+        5.278231999999996
+      ],
+      [
+        "index_elementwise_kernel",
+        2.741328
+      ],
+      [
+        "reduce_kernel",
+        2.5317199999999995
+      ],
+      [
+        "CatArrayBatchedCopy_alignedK_contig",
+        1.1885519999999996
+      ],
+      [
+        "CatArrayBatchedCopy_contig",
+        0.7096959999999999
+      ],
+      [
+        "bitonicSortKVInPlace",
+        0.425536
+      ],
+      [
+        "_scatter_gather_elementwise_kernel",
+        0.32714400000000005
+      ],
+      [
+        "magma_sgemmEx_kernel",
+        0.29993600000000004
+      ]
+    ]
+  },
+  "resplat/point-fwd": {
+    "median_gpu_span_ms": 275.44072,
+    "median_tensor_active_pct": 7.3353436815339474,
+    "steps": [
+      {
+        "gpu_span_ms": 302.40448,
+        "tensor_active_pct": 6.435185185185185
+      },
+      {
+        "gpu_span_ms": 275.715136,
+        "tensor_active_pct": 7.323177366702938
+      },
+      {
+        "gpu_span_ms": 275.166304,
+        "tensor_active_pct": 7.347509996364958
+      },
+      {
+        "gpu_span_ms": 274.325664,
+        "tensor_active_pct": 7.505286183011301
+      }
+    ],
+    "top_kernels_mean_ms": [
+      [
+        "elementwise_kernel",
+        66.52919200000004
+      ],
+      [
+        "vectorized_elementwise_kernel",
+        53.342388500000105
+      ],
+      [
+        "unrolled_elementwise_kernel",
+        33.786408000000016
+      ],
+      [
+        "vectorized_gather_kernel",
+        33.482768
+      ],
+      [
+        "vectorized_layer_norm_kernel",
+        21.878296
+      ],
+      [
+        "cutlass3x_sm100_tensorop_s64x256x16_conv3d_fprop_weight_stationary_nq_2d_tiled_bf16_bf16_f32_void_bf16_void_t1xr3xs3_64x256x64_dyn_cga_ndhwc_ndhwc_ndhwc_1sm",
+        10.233040000000003
+      ],
+      [
+        "nvjet_sm110_tst_128x160_64x8_2x1_2cta_v_bz_bias_TNT",
+        8.318952000000001
+      ],
+      [
+        "nvjet_sm110_tst_128x128_64x8_2x1_2cta_v_bz_bias_TNT",
+        7.831056
+      ],
+      [
+        "nvjet_sm110_tst_64x8_64x16_1x1_v_bz_TNT",
+        7.485624
+      ],
+      [
+        "nvjet_sm110_tst_64x8_64x16_1x1_v_bz_NNT",
+        7.441544000000001
+      ]
+    ]
+  },
+  "resplat/point-bwd": {
+    "median_gpu_span_ms": 474.86956799999996,
+    "median_tensor_active_pct": 8.076908025118032,
+    "steps": [
+      {
+        "gpu_span_ms": 476.626432,
+        "tensor_active_pct": 7.951311647429171
+      },
+      {
+        "gpu_span_ms": 474.9448,
+        "tensor_active_pct": 8.083175405348495
+      },
+      {
+        "gpu_span_ms": 471.420288,
+        "tensor_active_pct": 8.070640644887568
+      },
+      {
+        "gpu_span_ms": 474.794336,
+        "tensor_active_pct": 8.083614153327717
+      }
+    ],
+    "top_kernels_mean_ms": [
+      [
+        "elementwise_kernel",
+        77.64649600000006
+      ],
+      [
+        "vectorized_elementwise_kernel",
+        66.68362299999998
+      ],
+      [
+        "cutlass3x_sm100_tensorop_s128x128x16implicit_gemm_wgrad_bf16_bf16_f32_void_bf16_f32_128x128x64_dyn_cga_ndhwc_ndhwc_ndhwc_align8_2sm",
+        51.21884
+      ],
+      [
+        "unrolled_elementwise_kernel",
+        50.13545600000011
+      ],
+      [
+        "indexing_backward_kernel",
+        29.964055999999992
+      ],
+      [
+        "layer_norm_grad_input_kernel_vectorized",
+        29.228615999999995
+      ],
+      [
+        "GammaBetaBackwardCUDAKernelTemplate",
+        26.286984000000004
+      ],
+      [
+        "nvjet_sm110_tst_128x256_64x6_2x1_2cta_v_bz_splitK_NTT",
+        24.661584000000005
+      ],
+      [
+        "reduce_kernel",
+        13.417648000000005
+      ],
+      [
+        "nchwToNhwcKernel",
+        11.299192
+      ]
+    ]
+  },
+  "step": {
+    "median_gpu_span_ms": 782.756624,
+    "median_tensor_active_pct": 7.47539722234137,
+    "steps": [
+      {
+        "gpu_span_ms": 816.276544,
+        "tensor_active_pct": 7.027076696888018
+      },
+      {
+        "gpu_span_ms": 783.548288,
+        "tensor_active_pct": 7.477089980855137
+      },
+      {
+        "gpu_span_ms": 779.66512,
+        "tensor_active_pct": 7.473704463827604
+      },
+      {
+        "gpu_span_ms": 781.96496,
+        "tensor_active_pct": 7.542524619516562
+      }
+    ],
+    "top_kernels_mean_ms": []
+  }
+}

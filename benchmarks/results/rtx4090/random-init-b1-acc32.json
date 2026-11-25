@@ -1,0 +1,942 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "capability": [
+    8,
+    9
+  ],
+  "sm_count": 128,
+  "torch": "2.10.0+cu128",
+  "cuda": "12.8",
+  "cuda_visible_devices": "0",
+  "fp32_matmul_precision": "highest",
+  "cudnn_tf32": false,
+  "bf16_reduced_precision_reduction": false,
+  "fp16_reduced_precision_reduction": false,
+  "synthetic_random_weights": true,
+  "perceptual_bf16": true,
+  "perceptual_channels_last": true,
+  "perceptual_checkpoint": false,
+  "perceptual_view_chunk": 0,
+  "cuda_allocator_limit_gib": "21.5",
+  "fused_adamw": true,
+  "total_params": 209355313,
+  "trainable_params": 209355313,
+  "peak_allocated_bytes": 18302324736,
+  "peak_reserved_bytes": 21829255168,
+  "startup_peak_reserved_bytes": 1488977920,
+  "parameter_audit": {},
+  "accumulation": 32,
+  "updates": {
+    "1": {
+      "microbatches": 32,
+      "scenes": 32,
+      "cuda_ms": 13487.942565917969
+    }
+  },
+  "median": {
+    "forward_loss_ms": 165.7359390258789,
+    "backward_ms": 204.39141082763672,
+    "update_ms": 0.0010239999974146485,
+    "cuda_step_ms": 370.38226318359375,
+    "wall_batch_ms": 370.4338110983372,
+    "wall_cadence_ms": 448.3960149809718
+  },
+  "samples": [
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 1668.2852783203125,
+      "backward_ms": 438.54437255859375,
+      "update_ms": 1.7203199863433838,
+      "cuda_step_ms": 2108.550048828125,
+      "wall_batch_ms": 2108.6883153766394,
+      "wall_cadence_ms": null,
+      "loss": 0.26279324293136597,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0003"
+      ],
+      "context_views": [
+        [
+          15,
+          22,
+          25,
+          29,
+          33,
+          37,
+          41,
+          45
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 167.53146362304688,
+      "backward_ms": 204.6044158935547,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 372.13690185546875,
+      "wall_batch_ms": 372.1888270229101,
+      "wall_cadence_ms": 452.5024015456438,
+      "loss": 0.24262656271457672,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0003"
+      ],
+      "context_views": [
+        [
+          30,
+          32,
+          35,
+          40,
+          43,
+          46,
+          49,
+          51
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 166.2013397216797,
+      "backward_ms": 204.34226989746094,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 370.5446472167969,
+      "wall_batch_ms": 370.5980246886611,
+      "wall_cadence_ms": 449.79662727564573,
+      "loss": 0.24454456567764282,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0003"
+      ],
+      "context_views": [
+        [
+          8,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          34
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 166.32012939453125,
+      "backward_ms": 204.3125762939453,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 370.634765625,
+      "wall_batch_ms": 370.6852151080966,
+      "wall_cadence_ms": 451.9754061475396,
+      "loss": 0.2548943758010864,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0003"
+      ],
+      "context_views": [
+        [
+          23,
+          26,
+          29,
+          32,
+          35,
+          38,
+          42,
+          48
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 166.47576904296875,
+      "backward_ms": 204.60748291015625,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 371.08428955078125,
+      "wall_batch_ms": 371.13803159445524,
+      "wall_cadence_ms": 460.6776777654886,
+      "loss": 0.23807799816131592,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0006"
+      ],
+      "context_views": [
+        [
+          27,
+          30,
+          32,
+          35,
+          37,
+          39,
+          42,
+          47
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 165.81097412109375,
+      "backward_ms": 204.6945343017578,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 370.50653076171875,
+      "wall_batch_ms": 370.56707590818405,
+      "wall_cadence_ms": 448.3960149809718,
+      "loss": 0.24300116300582886,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0006"
+      ],
+      "context_views": [
+        [
+          26,
+          30,
+          33,
+          36,
+          39,
+          42,
+          45,
+          52
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 165.43557739257812,
+      "backward_ms": 204.22840881347656,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 369.6660461425781,
+      "wall_batch_ms": 369.723791256547,
+      "wall_cadence_ms": 447.121512144804,
+      "loss": 0.2390885055065155,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0006"
+      ],
+      "context_views": [
+        [
+          6,
+          9,
+          13,
+          17,
+          21,
+          28,
+          32,
+          35
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 165.7057342529297,
+      "backward_ms": 204.61260986328125,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 370.32037353515625,
+      "wall_batch_ms": 370.36975659430027,
+      "wall_cadence_ms": 443.9438180997968,
+      "loss": 0.22774924337863922,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0006"
+      ],
+      "context_views": [
+        [
+          30,
+          33,
+          35,
+          37,
+          40,
+          45,
+          48,
+          51
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 165.9656982421875,
+      "backward_ms": 204.47744750976562,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 370.44415283203125,
+      "wall_batch_ms": 370.4978656023741,
+      "wall_cadence_ms": 451.20747946202755,
+      "loss": 0.24122796952724457,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0004"
+      ],
+      "context_views": [
+        [
+          19,
+          21,
+          24,
+          27,
+          30,
+          33,
+          36,
+          41
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 165.51116943359375,
+      "backward_ms": 204.31564331054688,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 369.828857421875,
+      "wall_batch_ms": 369.8821486905217,
+      "wall_cadence_ms": 447.51201942563057,
+      "loss": 0.23230038583278656,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0004"
+      ],
+      "context_views": [
+        [
+          12,
+          15,
+          18,
+          21,
+          24,
+          27,
+          30,
+          37
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 165.51014709472656,
+      "backward_ms": 204.29209899902344,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 369.8032531738281,
+      "wall_batch_ms": 369.85526978969574,
+      "wall_cadence_ms": 444.16777789592743,
+      "loss": 0.2415643185377121,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0004"
+      ],
+      "context_views": [
+        [
+          23,
+          30,
+          34,
+          38,
+          42,
+          45,
+          49,
+          52
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 165.76614379882812,
+      "backward_ms": 204.3197479248047,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 370.0869140625,
+      "wall_batch_ms": 370.1392775401473,
+      "wall_cadence_ms": 446.51369471102953,
+      "loss": 0.23908063769340515,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0004"
+      ],
+      "context_views": [
+        [
+          19,
+          22,
+          26,
+          30,
+          34,
+          41,
+          45,
+          48
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 167.37295532226562,
+      "backward_ms": 204.76400756835938,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 372.1390075683594,
+      "wall_batch_ms": 372.1917252987623,
+      "wall_cadence_ms": 451.3846980407834,
+      "loss": 0.24148817360401154,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0010"
+      ],
+      "context_views": [
+        [
+          0,
+          3,
+          6,
+          9,
+          13,
+          20,
+          24,
+          28
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 166.73703002929688,
+      "backward_ms": 204.51622009277344,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 371.2542724609375,
+      "wall_batch_ms": 371.3128222152591,
+      "wall_cadence_ms": 460.12382209300995,
+      "loss": 0.22553543746471405,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0010"
+      ],
+      "context_views": [
+        [
+          10,
+          13,
+          16,
+          23,
+          27,
+          30,
+          33,
+          36
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 166.56813049316406,
+      "backward_ms": 204.69126892089844,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 371.2604064941406,
+      "wall_batch_ms": 371.3166508823633,
+      "wall_cadence_ms": 454.4760212302208,
+      "loss": 0.23569385707378387,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0010"
+      ],
+      "context_views": [
+        [
+          19,
+          22,
+          25,
+          30,
+          33,
+          35,
+          37,
+          39
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 165.9799041748047,
+      "backward_ms": 204.60643005371094,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 370.5873718261719,
+      "wall_batch_ms": 370.6404762342572,
+      "wall_cadence_ms": 450.7340230047703,
+      "loss": 0.2309742420911789,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0010"
+      ],
+      "context_views": [
+        [
+          17,
+          20,
+          24,
+          27,
+          30,
+          33,
+          36,
+          41
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 166.60890197753906,
+      "backward_ms": 204.50201416015625,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 371.1119384765625,
+      "wall_batch_ms": 371.16644252091646,
+      "wall_cadence_ms": 458.493759855628,
+      "loss": 0.23039184510707855,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0001"
+      ],
+      "context_views": [
+        [
+          15,
+          19,
+          22,
+          29,
+          33,
+          37,
+          41,
+          45
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 166.37525939941406,
+      "backward_ms": 204.621826171875,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 370.9991455078125,
+      "wall_batch_ms": 371.05035316199064,
+      "wall_cadence_ms": 452.5553025305271,
+      "loss": 0.237125962972641,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0001"
+      ],
+      "context_views": [
+        [
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          29,
+          36
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 166.5235137939453,
+      "backward_ms": 204.7518768310547,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 371.27642822265625,
+      "wall_batch_ms": 371.3283920660615,
+      "wall_cadence_ms": 451.69680658727884,
+      "loss": 0.23144835233688354,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0001"
+      ],
+      "context_views": [
+        [
+          29,
+          34,
+          37,
+          40,
+          43,
+          45,
+          48,
+          50
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 166.11740112304688,
+      "backward_ms": 204.37808227539062,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 370.49652099609375,
+      "wall_batch_ms": 370.5497458577156,
+      "wall_cadence_ms": 454.23951279371977,
+      "loss": 0.23510631918907166,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0001"
+      ],
+      "context_views": [
+        [
+          1,
+          4,
+          7,
+          10,
+          13,
+          16,
+          19,
+          24
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 164.9786834716797,
+      "backward_ms": 204.442626953125,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 369.4233703613281,
+      "wall_batch_ms": 369.4779509678483,
+      "wall_cadence_ms": 452.1753238514066,
+      "loss": 0.22808806598186493,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0002"
+      ],
+      "context_views": [
+        [
+          20,
+          23,
+          27,
+          30,
+          33,
+          36,
+          39,
+          44
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 161.68141174316406,
+      "backward_ms": 204.4200897216797,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 366.1035461425781,
+      "wall_batch_ms": 366.15621857345104,
+      "wall_cadence_ms": 441.6830511763692,
+      "loss": 0.22292087972164154,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0002"
+      ],
+      "context_views": [
+        [
+          23,
+          26,
+          29,
+          32,
+          35,
+          40,
+          42,
+          45
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 151.27420043945312,
+      "backward_ms": 204.3074493408203,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 355.5837097167969,
+      "wall_batch_ms": 355.63147719949484,
+      "wall_cadence_ms": 418.14137902110815,
+      "loss": 0.22479991614818573,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0002"
+      ],
+      "context_views": [
+        [
+          16,
+          18,
+          21,
+          26,
+          29,
+          31,
+          34,
+          36
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 151.299072265625,
+      "backward_ms": 204.26034545898438,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 355.56146240234375,
+      "wall_batch_ms": 355.6128265336156,
+      "wall_cadence_ms": 412.84647677093744,
+      "loss": 0.23634909093379974,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0002"
+      ],
+      "context_views": [
+        [
+          30,
+          35,
+          38,
+          40,
+          42,
+          45,
+          47,
+          50
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 151.731201171875,
+      "backward_ms": 204.11903381347656,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 355.852294921875,
+      "wall_batch_ms": 355.8972245082259,
+      "wall_cadence_ms": 416.4302470162511,
+      "loss": 0.2473413646221161,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0008"
+      ],
+      "context_views": [
+        [
+          21,
+          25,
+          29,
+          33,
+          36,
+          39,
+          43,
+          50
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 151.3244171142578,
+      "backward_ms": 204.2091522216797,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 355.53460693359375,
+      "wall_batch_ms": 355.58139625936747,
+      "wall_cadence_ms": 416.16187896579504,
+      "loss": 0.24833601713180542,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0008"
+      ],
+      "context_views": [
+        [
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          28,
+          33
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 152.02304077148438,
+      "backward_ms": 204.4047393798828,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 356.4298095703125,
+      "wall_batch_ms": 356.4766515046358,
+      "wall_cadence_ms": 415.5311230570078,
+      "loss": 0.23270435631275177,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0008"
+      ],
+      "context_views": [
+        [
+          8,
+          11,
+          14,
+          20,
+          23,
+          26,
+          29,
+          32
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 151.14341735839844,
+      "backward_ms": 204.16204833984375,
+      "update_ms": 0.002047999994829297,
+      "cuda_step_ms": 355.3075256347656,
+      "wall_batch_ms": 355.35397846251726,
+      "wall_cadence_ms": 414.3268493935466,
+      "loss": 0.23591609299182892,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0008"
+      ],
+      "context_views": [
+        [
+          10,
+          13,
+          16,
+          19,
+          22,
+          25,
+          28,
+          33
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 151.44032287597656,
+      "backward_ms": 204.08502197265625,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 355.5263671875,
+      "wall_batch_ms": 355.57268653064966,
+      "wall_cadence_ms": 425.4587981849909,
+      "loss": 0.25828930735588074,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0005"
+      ],
+      "context_views": [
+        [
+          25,
+          31,
+          34,
+          37,
+          40,
+          43,
+          46,
+          49
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 151.22738647460938,
+      "backward_ms": 204.00537109375,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 355.2337951660156,
+      "wall_batch_ms": 355.2829986438155,
+      "wall_cadence_ms": 414.14107009768486,
+      "loss": 0.2429019957780838,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0005"
+      ],
+      "context_views": [
+        [
+          17,
+          21,
+          25,
+          29,
+          33,
+          40,
+          43,
+          47
+        ]
+      ]
+    },
+    {
+      "step": 0,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 151.19973754882812,
+      "backward_ms": 204.03814697265625,
+      "update_ms": 0.0010239999974146485,
+      "cuda_step_ms": 355.2389221191406,
+      "wall_batch_ms": 355.28705827891827,
+      "wall_cadence_ms": 413.6806130409241,
+      "loss": 0.2380349040031433,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0005"
+      ],
+      "context_views": [
+        [
+          19,
+          23,
+          27,
+          34,
+          37,
+          40,
+          43,
+          47
+        ]
+      ]
+    },
+    {
+      "step": 1,
+      "update": 1,
+      "scenes": 1,
+      "forward_loss_ms": 164.61619567871094,
+      "backward_ms": 204.3514862060547,
+      "update_ms": 30.447616577148438,
+      "cuda_step_ms": 399.415283203125,
+      "wall_batch_ms": 399.4635185226798,
+      "wall_cadence_ms": 456.00248221307993,
+      "loss": 0.24011532962322235,
+      "refinement_iterations": null,
+      "scene_keys": [
+        "synthetic_dl3dv_0005"
+      ],
+      "context_views": [
+        [
+          34,
+          37,
+          39,
+          41,
+          44,
+          49,
+          52,
+          55
+        ]
+      ]
+    }
+  ]
+}

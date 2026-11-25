@@ -1,0 +1,5 @@
+{
+  "max_absolute_loss_diff": 0.00035581737756729126,
+  "aligned_microbatches": 5,
+  "sampled_relative_l2": {}
+}
