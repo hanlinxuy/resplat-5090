@@ -7,6 +7,7 @@ import torch.utils.checkpoint
 import pointops
 from einops import rearrange
 
+from ....misc.profile_ranges import profile_range
 from ..unimatch.dinov2.layers.block import Block as MultiViewBlock
 from .local_knn import local_knn_query
 
@@ -237,9 +238,9 @@ class PlainPointTransformer(nn.Module):
         if cached_knn_idx is not None:
             knn_idx = cached_knn_idx
         elif self.cache_knn_idx:
-            knn_idx = self.compute_knn(p, o, b=b, v=v, h=h, w=w,
-                                       extrinsics=extrinsics,
-                                       intrinsics=intrinsics)
+            with profile_range("point_knn"):
+                knn_idx = self.compute_knn(p, o, b=b, v=v, h=h, w=w,
+                                           extrinsics=extrinsics, intrinsics=intrinsics)
 
         num_blocks = len(self.mv_blocks) if self.with_mv_attn else len(self.blocks)
 

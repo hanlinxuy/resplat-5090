@@ -5,6 +5,7 @@ from bisect import bisect_left
 from collections import Counter, defaultdict
 import json
 from pathlib import Path
+import re
 import sqlite3
 from statistics import mean, median
 
@@ -13,6 +14,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("profile", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--chrome-trace", type=Path,
+                        help="Export only ReSplat stage GPU spans for Chrome/Perfetto")
     args = parser.parse_args()
     with sqlite3.connect(args.profile) as db:
         events = db.execute("""
@@ -64,9 +67,11 @@ def main():
     stage_kernels = defaultdict(Counter)
     steps = []
     step_kernels = Counter()
+    spans = []
     for (name, start), kernels in windows.items():
         gpu_start = kernels[0][0]
         gpu_end = max(item[1] for item in kernels)
+        spans.append((name, gpu_start, gpu_end, len(kernels)))
         stages[name].append({
             "gpu_span_ms": (gpu_end - gpu_start) / 1e6,
             "kernel_sum_ms": sum(hi - lo for lo, hi, _ in kernels) / 1e6,
@@ -110,6 +115,21 @@ def main():
             [kernel, ms / len(values)] for kernel, ms in stage_kernels[name].most_common(8)
         ]
     args.output.write_text(json.dumps(result, indent=2) + "\n")
+    if args.chrome_trace:
+        spans = [span for span in spans if re.fullmatch(r"resplat/[A-Za-z0-9_.]+", span[0])]
+        origin = min(lo for _, lo, _, _ in spans)
+        tracks = {"Training phases": 1}
+        trace = [{"ph": "M", "name": "process_name", "pid": 1, "args": {"name": "ReSplat GPU spans"}}]
+        for name, lo, hi, count in sorted(spans, key=lambda span: span[1]):
+            stage = name.removeprefix("resplat/")
+            track = "Training phases" if stage.startswith("train_") else stage
+            tid = tracks.setdefault(track, len(tracks) + 1)
+            trace.append({"ph": "X", "name": stage, "cat": "ReSplat GPU span", "pid": 1, "tid": tid,
+                          "ts": (lo - origin) / 1000, "dur": (hi - lo) / 1000,
+                          "args": {"CUDA kernels": count}})
+        trace.extend({"ph": "M", "name": "thread_name", "pid": 1, "tid": tid, "args": {"name": label}}
+                     for label, tid in tracks.items())
+        args.chrome_trace.write_text(json.dumps({"traceEvents": trace}, indent=2) + "\n")
 
 
 if __name__ == "__main__":

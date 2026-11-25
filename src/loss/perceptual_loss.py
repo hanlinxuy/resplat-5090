@@ -1,5 +1,3 @@
-from contextlib import nullcontext
-
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
@@ -7,6 +5,8 @@ from torchvision.models import vgg19
 import scipy.io
 import os
 from pathlib import Path
+
+from ..misc.profile_ranges import profile_range
 
 
 # the perception loss code is modified from https://github.com/zhengqili/Crowdsampling-the-Plenoptic-Function/blob/f5216f312cf82d77f8d20454b5eeb3930324630a/models/networks.py#L1478
@@ -109,8 +109,7 @@ class PerceptualLoss(nn.Module):
         pred_img_p = self._preprocess_images(pred_img)
         
         # Extract features
-        capture = pred_img_p.is_cuda and os.environ.get("RESPLAT_PROFILE_CAPTURE") == "1"
-        with torch.cuda.nvtx.range("resplat/perceptual_vgg") if capture else nullcontext():
+        with profile_range("perceptual_vgg"):
             if self.bf16_autocast and pred_img_p.is_cuda:
                 with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
                     target_features = self._extract_features(target_img_p)

@@ -10,9 +10,11 @@ from time import perf_counter
 import torch
 from pytorch_lightning.callbacks import Callback
 
+from .profile_ranges import profile_backend, profile_range
+
 
 class SingleGPUProfile(Callback):
-    def __init__(self, path, warmup, samples, *, capture=False):
+    def __init__(self, path, warmup, samples, *, capture=False, torch_trace=None):
         if warmup < 0 or samples < 1:
             raise ValueError("profile warmup must be nonnegative and samples must be positive")
         self.path = Path(path)
@@ -23,7 +25,9 @@ class SingleGPUProfile(Callback):
         self.events = None
         self.previous_end = None
         self.started = False
-        self.torch_trace = os.environ.get("RESPLAT_PROFILE_TORCH_TRACE")
+        self.finished = False
+        self.torch_trace = torch_trace
+        self.backend = "nsys" if capture else "torch" if torch_trace else None
         if self.capture and self.torch_trace:
             raise ValueError("run Nsight and PyTorch Profiler in separate processes")
 
@@ -32,25 +36,39 @@ class SingleGPUProfile(Callback):
             raise ValueError("ReSplat baseline profiling requires one CUDA GPU")
         self.first_step = trainer.global_step
         self.hooks = []
-        if self.capture:
+        self.module_ranges = []
+        if self.backend:
             for name, module in pl_module.named_modules():
                 if name in ("encoder.depth_predictor", "encoder.gaussian_regressor", "encoder.pt",
                             "encoder.gaussian_head", "decoder") or (
-                            name.startswith("losses.") and name.count(".") == 1):
+                            name.startswith("losses.") and name.count(".") == 1) or (
+                            name.startswith("encoder.pt.blocks.") and name.endswith(".attn")) or (
+                            name.startswith("encoder.pt.mv_blocks.") and name.endswith(".conv")):
                     self.hooks.append(module.register_forward_pre_hook(
                         lambda _module, _args, label=name: self._push(label),
                     ))
                     self.hooks.append(module.register_forward_hook(
-                        lambda _module, _args, _output: self._pop(),
+                        lambda _module, _args, _output: self._pop(), always_call=True,
                     ))
 
     def _push(self, name):
-        if self.events:
-            torch.cuda.nvtx.range_push(f"resplat/{name}")
+        if self.events is not None:
+            scope = profile_range(name)
+            scope.__enter__()
+            self.module_ranges.append(scope)
 
     def _pop(self):
-        if self.events:
-            torch.cuda.nvtx.range_pop()
+        if self.events is not None:
+            self.module_ranges.pop().__exit__(None, None, None)
+
+    def _next_phase(self, name):
+        self.phase.__exit__(None, None, None)
+        self.phase = profile_range(name)
+        self.phase.__enter__()
+
+    def on_train_end(self, trainer, pl_module):
+        if self.rows and not self.finished:
+            self._finish(trainer, pl_module)
 
     def on_fit_end(self, trainer, pl_module):
         for hook in self.hooks:
@@ -77,25 +95,26 @@ class SingleGPUProfile(Callback):
         self.update_index = trainer.global_step + 1
         self.events = [torch.cuda.Event(enable_timing=True) for _ in range(4)]
         self.events[0].record()
-        torch.cuda.nvtx.range_push("resplat/train_forward_loss")
+        self.backend_token = profile_backend.set(self.backend)
+        self.phase = profile_range("train_forward_loss")
+        self.phase.__enter__()
 
     def on_before_backward(self, trainer, pl_module, loss):
         if self.events:
             self.events[1].record()
-            torch.cuda.nvtx.range_pop()
-            torch.cuda.nvtx.range_push("resplat/train_backward")
+            self._next_phase("train_backward")
 
     def on_after_backward(self, trainer, pl_module):
         if self.events:
             self.events[2].record()
-            torch.cuda.nvtx.range_pop()
-            torch.cuda.nvtx.range_push("resplat/train_update")
+            self._next_phase("train_update")
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
         if not self.events:
             return
         self.events[3].record()
-        torch.cuda.nvtx.range_pop()
+        self.phase.__exit__(None, None, None)
+        profile_backend.reset(self.backend_token)
         self.events[3].synchronize()
         end = perf_counter()
         a, b, c, d = self.events
@@ -118,8 +137,11 @@ class SingleGPUProfile(Callback):
         ))
         self.previous_end = end
         self.events = None
-        if trainer.global_step != self.first_step + self.warmup + self.samples:
-            return
+        if trainer.global_step == self.first_step + self.warmup + self.samples:
+            self._finish(trainer, pl_module)
+
+    def _finish(self, trainer, pl_module):
+        self.finished = True
         if self.capture:
             torch.cuda.profiler.stop()
         if self.torch_trace:
@@ -166,6 +188,8 @@ class SingleGPUProfile(Callback):
             update["cuda_ms"] += row["cuda_step_ms"]
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.path.write_text(json.dumps(dict(
+            profile_mode=self.backend or "timing",
+            capture_complete=trainer.global_step == self.first_step + self.warmup + self.samples,
             gpu=properties.name, capability=torch.cuda.get_device_capability(pl_module.device),
             sm_count=properties.multi_processor_count, torch=torch.__version__, cuda=torch.version.cuda,
             cuda_visible_devices=os.environ.get("CUDA_VISIBLE_DEVICES"),
@@ -180,7 +204,14 @@ class SingleGPUProfile(Callback):
             perceptual_view_chunk=int(os.environ.get("RESPLAT_PERCEPTUAL_VIEW_CHUNK", "0")),
             depth_candidates=pl_module.encoder.cfg.num_depth_candidates,
             depth_cost_chunk=pl_module.encoder.cfg.cost_volume_depth_chunk,
+            depth_activation_checkpointing=pl_module.encoder.cfg.depth_activation_checkpointing,
             point_blocks=pl_module.encoder.cfg.num_blocks,
+            local_knn=pl_module.encoder.cfg.init_use_local_knn,
+            fused_knn_candidates=pl_module.encoder.cfg.init_fused_knn_candidates,
+            fused_local_attention_rows=pl_module.encoder.cfg.init_fused_local_attention_rows,
+            channels_last_conv=pl_module.encoder.cfg.init_channels_last_conv,
+            point_activation_checkpointing=pl_module.encoder.cfg.init_use_checkpointing,
+            gaussians_per_latent=pl_module.encoder.cfg.init_gaussian_multiple,
             cuda_allocator_limit_gib=os.environ.get("RESPLAT_CUDA_ALLOCATOR_LIMIT_GIB"),
             fused_adamw=bool(trainer.optimizers[0].defaults.get("fused")),
             total_params=sum(p.numel() for p in pl_module.parameters()),

@@ -161,15 +161,23 @@ def train(cfg_dict: DictConfig):
     for cb in callbacks:
         cb.CHECKPOINT_EQUALS_CHAR = '_'
 
+    profile_mode = os.environ.get("RESPLAT_PROFILE")
+    if profile_mode not in (None, "off", "timing", "nsys", "torch"):
+        raise ValueError("RESPLAT_PROFILE must be off, timing, nsys or torch")
     profile_path = os.environ.get("RESPLAT_PROFILE_JSON")
-    if profile_path and cfg.mode == "train":
+    capture = os.environ.get("RESPLAT_PROFILE_CAPTURE") == "1"
+    torch_trace = os.environ.get("RESPLAT_PROFILE_TORCH_TRACE")
+    if profile_mode is not None:
+        capture = profile_mode == "nsys"
+        torch_trace = (torch_trace or output_dir / "torch-trace.json") if profile_mode == "torch" else None
+    if cfg.mode == "train" and profile_mode != "off" and (profile_mode or profile_path or capture or torch_trace):
         from src.misc.single_gpu_profile import SingleGPUProfile
 
         callbacks.append(SingleGPUProfile(
-            profile_path,
+            profile_path or output_dir / "step-profile.json",
             int(os.environ.get("RESPLAT_PROFILE_WARMUP", "10")),
             int(os.environ.get("RESPLAT_PROFILE_SAMPLES", "20")),
-            capture=os.environ.get("RESPLAT_PROFILE_CAPTURE") == "1",
+            capture=capture, torch_trace=torch_trace,
         ))
 
     quality_fixture = os.environ.get("RESPLAT_SYNTHETIC_QUALITY_FIXTURE")

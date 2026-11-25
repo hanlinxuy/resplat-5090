@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.checkpoint import checkpoint
 
+from ....misc.profile_ranges import profile_range
+
 from .backbone import CNNEncoder
 from .vit_fpn import ViTFeaturePyramid
 from .mv_transformer import (
@@ -545,10 +547,11 @@ class MultiViewUniMatch(nn.Module):
                     depths = candidates.exp() if self.sample_log_depth else candidates.reciprocal()
                     depths = depths[:, None].expand(-1, tgt_fp32.size(1), -1, h, w)
                     depths = depths.reshape(-1, candidates.size(1), h, w).contiguous()
-                    parts.append(cost_volume_chunk(
-                        ref_fp32, tgt_fp32, intrinsics_flat, pose_flat, depths,
-                        self.grid_sample_disable_cudnn,
-                    ))
+                    with profile_range("cost_volume_fused"):
+                        parts.append(cost_volume_chunk(
+                            ref_fp32, tgt_fp32, intrinsics_flat, pose_flat, depths,
+                            self.grid_sample_disable_cudnn,
+                        ))
                 cost_volume = torch.cat(parts, dim=1)
             else:
                 if scale_idx == 0:
@@ -569,13 +572,14 @@ class MultiViewUniMatch(nn.Module):
                 tgt_features = tgt_features.float()
                 depth_candidates_curr = depth_candidates_curr.float()
 
-                warped_tgt_features = warp_with_pose_depth_candidates(
-                    rearrange(tgt_features, "b v ... -> (b v) ..."),
-                    rearrange(intrinsics_input, "b v ... -> (b v) ..."),
-                    rearrange(pose_curr, "b v ... -> (b v) ..."),
-                    torch.exp(depth_candidates_curr) if self.sample_log_depth else 1.0 / depth_candidates_curr,  # convert inverse/log depth to depth
-                    grid_sample_disable_cudnn=self.grid_sample_disable_cudnn,
-                )  # [BV*(V-1), C, D, H, W]
+                with profile_range("cost_volume_eager_warp"):
+                    warped_tgt_features = warp_with_pose_depth_candidates(
+                        rearrange(tgt_features, "b v ... -> (b v) ..."),
+                        rearrange(intrinsics_input, "b v ... -> (b v) ..."),
+                        rearrange(pose_curr, "b v ... -> (b v) ..."),
+                        torch.exp(depth_candidates_curr) if self.sample_log_depth else 1.0 / depth_candidates_curr,  # convert inverse/log depth to depth
+                        grid_sample_disable_cudnn=self.grid_sample_disable_cudnn,
+                    )  # [BV*(V-1), C, D, H, W]
 
                 # ref: [BV, C, H, W]
                 # warped: [BV*(V-1), C, D, H, W] -> [BV, V-1, C, D, H, W]

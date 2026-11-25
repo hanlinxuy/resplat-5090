@@ -1,4 +1,3 @@
-from contextlib import nullcontext
 from dataclasses import dataclass
 import os
 from typing import Literal
@@ -10,6 +9,7 @@ from torch import Tensor
 import math
 
 from ...dataset import DatasetCfg
+from ...misc.profile_ranges import profile_range
 from ..types import Gaussians
 from .decoder import DepthRenderingMode
 from gsplat.rendering import rasterization
@@ -88,8 +88,7 @@ class GSplatDecoderSplattingCUDA(Decoder[GSplatDecoderSplattingCUDACfg]):
             render_mode="RGB+ED",
             covars=covars,
         )
-        capture = means.is_cuda and os.environ.get("RESPLAT_PROFILE_CAPTURE") == "1"
-        with torch.cuda.nvtx.range("resplat/gsplat_rasterization") if capture else nullcontext():
+        with profile_range("gsplat_rasterization"):
             render_colors, render_alphas, meta = rasterization(**raster_args)
         fixture = os.environ.get("RESPLAT_PROFILE_RASTER_FIXTURE")
         if fixture and not getattr(self, "_wrote_raster_fixture", False):

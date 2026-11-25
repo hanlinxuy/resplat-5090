@@ -93,18 +93,7 @@ python -m benchmarks.check_fused_cost_volume
 
 ## 4. Profiling
 
-正常跑分与 profiler 采样分开。使用 NVTX 对照 depth、Point Transformer、Gaussian head、渲染、反向和更新。Tensor Active 用 Nsight Systems 的设备采样，NCU 用来逐核诊断。整网 MFU 需按实跑 shape 核算训练 FLOPs，现有 Thor 的 MFU 仅覆盖 Point Transformer 子图。
-
-```bash
-RESPLAT_PROFILE_CAPTURE=1 RESPLAT_PROFILE_WARMUP=10 RESPLAT_PROFILE_SAMPLES=4 \
-  nsys profile -t cuda,nvtx -c cudaProfilerApi --capture-range-end=stop \
-  -o runs/5090-local \
-  benchmarks/run_dl3dv_single_gpu.sh synthetic-dl3dv "$depth_checkpoint" \
-  runs/5090-local-profile 1 dataset.opencv_pose_format=false \
-  data_loader.train.num_workers=0 data_loader.train.persistent_workers=false
-```
-
-需要 Tensor Active 时按设备支持添加 `--gpu-metrics-devices=0`。导出 SQLite 后可用 [整步分析脚本](../benchmarks/summarize_full_training_nsys.py) 和 [局部分析脚本](../benchmarks/summarize_local_knn_nsys.py)。
+用 `RESPLAT_PROFILE=timing|torch|nsys|off` 选择采样方式。[Profiler 手册与三档流水](PROFILING.md)含采集、导出、阶段耗时和已测 trace。整网 MFU 需按实跑 shape 核算训练 FLOPs，现有 Thor 的 MFU 仅覆盖 Point Transformer 子图。
 
 ## 5. 448×224 的 80 万高斯分支
 

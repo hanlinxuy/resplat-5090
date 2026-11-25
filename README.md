@@ -18,6 +18,7 @@ ReSplat Base 的单卡训练优化与复现仓库。保留上游初始化和递�
 
 - [Handoff](docs/HANDOFF.md) 提供环境、数据与 checkpoint、逐级 A/B 命令、Nsight 用法和 5090 验收顺序。
 - [Benchmark launcher](benchmarks/run_dl3dv_single_gpu.sh) 运行完整初始化前向、反向与优化器，输出 profile JSON。
+- [Profiler 开关与三档流水](docs/PROFILING.md) 提供 PyTorch / Nsight 采集命令与已测 GPU 时间线。
 - [Benchmark 结果](benchmarks/results/) 包含选取的实测 JSON 和聚合画质记录。
 - [上游说明](docs/UPSTREAM.md)、[数据格式](DATASETS.md)、[模型权重](MODEL_ZOO.md) 延续 ReSplat 的原始使用方式。
 
