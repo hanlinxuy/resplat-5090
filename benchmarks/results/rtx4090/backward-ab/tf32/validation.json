@@ -1,0 +1,24 @@
+{
+  "max_absolute_loss_diff": 0.0007608383893966675,
+  "aligned_microbatches": 8,
+  "sampled_relative_l2": {
+    "encoder.pt.blocks.0.attn.qkv.weight": {
+      "parameter": 0.005948067278128008,
+      "grad": 0.3667430138773379,
+      "exp_avg": 0.38264158987336816,
+      "exp_avg_sq": 0.3380971222534056
+    },
+    "encoder.pt.mv_blocks.0.conv.weight": {
+      "parameter": 0.021010807024233847,
+      "grad": 0.25972612814666396,
+      "exp_avg": 0.5840031894972219,
+      "exp_avg_sq": 0.27857027102658566
+    },
+    "encoder.gaussian_head.0.weight": {
+      "parameter": 0.009693781507541941,
+      "grad": 0.35196900193617053,
+      "exp_avg": 0.4331671680912584,
+      "exp_avg_sq": 0.29814391742550284
+    }
+  }
+}

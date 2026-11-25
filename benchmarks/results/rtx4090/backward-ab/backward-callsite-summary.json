@@ -1,0 +1,1396 @@
+{
+  "steps": 2,
+  "total_spans_ms": [
+    206.52,
+    207.07
+  ],
+  "all": [
+    {
+      "group": "all",
+      "ms": 198.2779,
+      "calls_per_step": 4027.0
+    }
+  ],
+  "module": [
+    {
+      "group": "encoder.pt",
+      "ms": 96.8789,
+      "calls_per_step": 661.0
+    },
+    {
+      "group": "encoder.depth_predictor",
+      "ms": 62.2919,
+      "calls_per_step": 2808.0
+    },
+    {
+      "group": "other/unmarked",
+      "ms": 13.8065,
+      "calls_per_step": 285.0
+    },
+    {
+      "group": "encoder.gaussian_regressor",
+      "ms": 10.2242,
+      "calls_per_step": 32.0
+    },
+    {
+      "group": "perceptual_vgg",
+      "ms": 7.7487,
+      "calls_per_step": 45.0
+    },
+    {
+      "group": "cost_volume_eager_warp",
+      "ms": 4.0363,
+      "calls_per_step": 2.0
+    },
+    {
+      "group": "gsplat_rasterization",
+      "ms": 1.8405,
+      "calls_per_step": 96.0
+    },
+    {
+      "group": "unlinked",
+      "ms": 1.2357,
+      "calls_per_step": 83.0
+    },
+    {
+      "group": "encoder.gaussian_head",
+      "ms": 0.2152,
+      "calls_per_step": 15.0
+    }
+  ],
+  "node": [
+    {
+      "group": "ConvolutionBackward0",
+      "ms": 55.9785,
+      "calls_per_step": 955.0
+    },
+    {
+      "group": "AddmmBackward0",
+      "ms": 40.6983,
+      "calls_per_step": 434.0
+    },
+    {
+      "group": "NativeLayerNormBackward0",
+      "ms": 17.192,
+      "calls_per_step": 212.0
+    },
+    {
+      "group": "ToCopyBackward0",
+      "ms": 12.531,
+      "calls_per_step": 750.0
+    },
+    {
+      "group": "MulBackward0",
+      "ms": 9.6326,
+      "calls_per_step": 244.0
+    },
+    {
+      "group": "GeluBackward0",
+      "ms": 6.2634,
+      "calls_per_step": 36.0
+    },
+    {
+      "group": "ViewBackward0",
+      "ms": 6.1169,
+      "calls_per_step": 87.0
+    },
+    {
+      "group": "FusedLocalAttentionBackward",
+      "ms": 6.0952,
+      "calls_per_step": 18.0
+    },
+    {
+      "group": "ScaledDotProductFlashAttentionBackward0",
+      "ms": 6.0117,
+      "calls_per_step": 72.0
+    },
+    {
+      "group": "BmmBackward0",
+      "ms": 4.0388,
+      "calls_per_step": 22.0
+    },
+    {
+      "group": "GridSampler2DBackward0",
+      "ms": 4.0363,
+      "calls_per_step": 2.0
+    },
+    {
+      "group": "MmBackward0",
+      "ms": 3.6531,
+      "calls_per_step": 210.0
+    },
+    {
+      "group": "UpsampleBilinear2DBackward0",
+      "ms": 3.1685,
+      "calls_per_step": 44.0
+    },
+    {
+      "group": "PixelShuffleBackward0",
+      "ms": 3.06,
+      "calls_per_step": 10.0
+    },
+    {
+      "group": "AbsBackward0",
+      "ms": 2.2408,
+      "calls_per_step": 18.0
+    },
+    {
+      "group": "AvgPool2DBackward0",
+      "ms": 2.1393,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": "ReluBackward0",
+      "ms": 1.976,
+      "calls_per_step": 41.0
+    },
+    {
+      "group": "ScaledDotProductEfficientAttentionBackward0",
+      "ms": 1.7466,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": "CatBackward0",
+      "ms": 1.3582,
+      "calls_per_step": 22.0
+    },
+    {
+      "group": "_RasterizeToPixelsBackward",
+      "ms": 0.944,
+      "calls_per_step": 5.0
+    }
+  ],
+  "copy_ms": 29.2987,
+  "copy_by_op": [
+    {
+      "group": [
+        "ToCopyBackward0",
+        "aten::copy_"
+      ],
+      "ms": 9.8039,
+      "calls_per_step": 692.0
+    },
+    {
+      "group": [
+        "ConvolutionBackward0",
+        "aten::convolution_backward"
+      ],
+      "ms": 5.6298,
+      "calls_per_step": 518.0
+    },
+    {
+      "group": [
+        "ViewBackward0",
+        "aten::copy_"
+      ],
+      "ms": 4.9833,
+      "calls_per_step": 78.0
+    },
+    {
+      "group": [
+        "PixelShuffleBackward0",
+        "aten::copy_"
+      ],
+      "ms": 3.06,
+      "calls_per_step": 10.0
+    },
+    {
+      "group": [
+        "ConvolutionBackward0",
+        "aten::copy_"
+      ],
+      "ms": 2.6644,
+      "calls_per_step": 36.0
+    },
+    {
+      "group": [
+        "PixelUnshuffleBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.732,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "torch::autograd::CopySlices",
+        "aten::copy_"
+      ],
+      "ms": 0.4892,
+      "calls_per_step": 42.0
+    },
+    {
+      "group": [
+        "CatBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.3534,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "SliceBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.2415,
+      "calls_per_step": 14.0
+    },
+    {
+      "group": [
+        "UnbindBackward0",
+        "aten::cat"
+      ],
+      "ms": 0.2273,
+      "calls_per_step": 21.0
+    },
+    {
+      "group": [
+        "AsStridedBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.2127,
+      "calls_per_step": 13.0
+    },
+    {
+      "group": [
+        "MulBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.1397,
+      "calls_per_step": 24.0
+    },
+    {
+      "group": [
+        "UpsampleBilinear2DBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.1308,
+      "calls_per_step": 4.0
+    },
+    {
+      "group": [
+        "SoftmaxBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.1257,
+      "calls_per_step": 3.0
+    },
+    {
+      "group": [
+        "FusedLocalAttentionBackward",
+        "aten::copy_"
+      ],
+      "ms": 0.1069,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "AddmmBackward0",
+        "aten::sum"
+      ],
+      "ms": 0.0839,
+      "calls_per_step": 99.0
+    },
+    {
+      "group": [
+        "SplitBackward0",
+        "aten::cat"
+      ],
+      "ms": 0.0517,
+      "calls_per_step": 9.0
+    },
+    {
+      "group": [
+        "AddBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.0482,
+      "calls_per_step": 14.0
+    },
+    {
+      "group": [
+        "UnsafeViewBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.0429,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "RollBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.0427,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "NativeLayerNormBackward0",
+        "aten::copy_"
+      ],
+      "ms": 0.034,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "SplitWithSizesBackward0",
+        "aten::cat"
+      ],
+      "ms": 0.0259,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "MulBackward0",
+        "aten::sum"
+      ],
+      "ms": 0.0203,
+      "calls_per_step": 24.0
+    },
+    {
+      "group": [
+        "ConvolutionBackward0",
+        "aten::sum"
+      ],
+      "ms": 0.0176,
+      "calls_per_step": 20.0
+    },
+    {
+      "group": [
+        "IndexBackward0",
+        "aten::_index_put_impl_"
+      ],
+      "ms": 0.0108,
+      "calls_per_step": 12.0
+    }
+  ],
+  "copy_by_module": [
+    {
+      "group": "encoder.pt",
+      "ms": 16.8653,
+      "calls_per_step": 300.0
+    },
+    {
+      "group": "encoder.depth_predictor",
+      "ms": 8.3176,
+      "calls_per_step": 1236.0
+    },
+    {
+      "group": "encoder.gaussian_regressor",
+      "ms": 1.7814,
+      "calls_per_step": 25.0
+    },
+    {
+      "group": "other/unmarked",
+      "ms": 1.5781,
+      "calls_per_step": 31.0
+    },
+    {
+      "group": "unlinked",
+      "ms": 0.7019,
+      "calls_per_step": 55.0
+    },
+    {
+      "group": "gsplat_rasterization",
+      "ms": 0.0335,
+      "calls_per_step": 15.0
+    },
+    {
+      "group": "perceptual_vgg",
+      "ms": 0.0124,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": "encoder.gaussian_head",
+      "ms": 0.0085,
+      "calls_per_step": 6.0
+    }
+  ],
+  "copy_by_shape": [
+    {
+      "group": [
+        "encoder.pt",
+        "PixelShuffleBackward0",
+        "aten::copy_",
+        "['float', 'float', 'Scalar']",
+        "[[8, 512, 4, 4, 16, 28], [8, 512, 4, 4, 16, 28], []]"
+      ],
+      "ms": 2.8675,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ViewBackward0",
+        "aten::copy_",
+        "['float', 'float', 'Scalar']",
+        "[[1, 8, 16, 28, 8192], [1, 8, 16, 28, 8192], []]"
+      ],
+      "ms": 2.5527,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ConvolutionBackward0",
+        "aten::copy_",
+        "['c10::BFloat16', 'c10::BFloat16', 'Scalar']",
+        "[[8, 512, 64, 112], [8, 512, 64, 112], []]"
+      ],
+      "ms": 2.0313,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ViewBackward0",
+        "aten::copy_",
+        "['c10::BFloat16', 'c10::BFloat16', 'Scalar']",
+        "[[1, 8, 64, 112, 512], [1, 8, 64, 112, 512], []]"
+      ],
+      "ms": 2.0156,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ToCopyBackward0",
+        "aten::copy_",
+        "['float', 'c10::BFloat16', 'Scalar']",
+        "[[57344, 512], [57344, 512], []]"
+      ],
+      "ms": 1.9601,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ToCopyBackward0",
+        "aten::copy_",
+        "['c10::BFloat16', 'float', 'Scalar']",
+        "[[57344, 512], [57344, 512], []]"
+      ],
+      "ms": 1.8294,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ToCopyBackward0",
+        "aten::copy_",
+        "['c10::BFloat16', 'float', 'Scalar']",
+        "[[1, 3584, 8192], [1, 3584, 8192], []]"
+      ],
+      "ms": 0.9159,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ToCopyBackward0",
+        "aten::copy_",
+        "['float', 'c10::BFloat16', 'Scalar']",
+        "[[8, 512, 64, 112], [8, 512, 64, 112], []]"
+      ],
+      "ms": 0.8733,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "PixelUnshuffleBackward0",
+        "aten::copy_",
+        "['c10::BFloat16', 'c10::BFloat16', 'Scalar']",
+        "[[8, 512, 16, 4, 28, 4], [8, 512, 16, 4, 28, 4], []]"
+      ],
+      "ms": 0.732,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward",
+        "['c10::BFloat16', 'c10::BFloat16', 'c10::BFloat16', 'ScalarList', 'ScalarList', 'ScalarList', 'ScalarList', 'Scalar', 'ScalarList', 'Scalar', 'ScalarList']",
+        "[[8, 64, 128, 224], [8, 64, 128, 224], [64, 64, 3, 3], [], [], [], [], [], [], [], []]"
+      ],
+      "ms": 0.6992,
+      "calls_per_step": 32.0
+    },
+    {
+      "group": [
+        "encoder.gaussian_regressor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward",
+        "['c10::BFloat16', 'c10::BFloat16', 'c10::BFloat16', 'ScalarList', 'ScalarList', 'ScalarList', 'ScalarList', 'Scalar', 'ScalarList', 'Scalar', 'ScalarList']",
+        "[[8, 512, 64, 112], [8, 658, 64, 112], [512, 658, 3, 3], [], [], [], [], [], [], [], []]"
+      ],
+      "ms": 0.6725,
+      "calls_per_step": 10.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward",
+        "['c10::BFloat16', 'c10::BFloat16', 'c10::BFloat16', 'ScalarList', 'ScalarList', 'ScalarList', 'ScalarList', 'Scalar', 'ScalarList', 'Scalar', 'ScalarList']",
+        "[[8, 24, 256, 448], [8, 48, 258, 450], [24, 48, 3, 3], [], [], [], [], [], [], [], []]"
+      ],
+      "ms": 0.5842,
+      "calls_per_step": 8.0
+    },
+    {
+      "group": [
+        "encoder.gaussian_regressor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward",
+        "['c10::BFloat16', 'c10::BFloat16', 'c10::BFloat16', 'ScalarList', 'ScalarList', 'ScalarList', 'ScalarList', 'Scalar', 'ScalarList', 'Scalar', 'ScalarList']",
+        "[[8, 512, 64, 112], [8, 512, 64, 112], [512, 512, 3, 3], [], [], [], [], [], [], [], []]"
+      ],
+      "ms": 0.51,
+      "calls_per_step": 8.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward",
+        "['c10::BFloat16', 'c10::BFloat16', 'c10::BFloat16', 'ScalarList', 'ScalarList', 'ScalarList', 'ScalarList', 'Scalar', 'ScalarList', 'Scalar', 'ScalarList']",
+        "[[8, 48, 128, 224], [8, 48, 128, 224], [48, 48, 3, 3], [], [], [], [], [], [], [], []]"
+      ],
+      "ms": 0.481,
+      "calls_per_step": 28.0
+    },
+    {
+      "group": [
+        "other/unmarked",
+        "ToCopyBackward0",
+        "aten::copy_",
+        "['float', 'c10::BFloat16', 'Scalar']",
+        "[[57344, 1169], [57344, 1169], []]"
+      ],
+      "ms": 0.3929,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "encoder.gaussian_regressor",
+        "ConvolutionBackward0",
+        "aten::copy_",
+        "['c10::BFloat16', 'c10::BFloat16', 'Scalar']",
+        "[[8, 512, 64, 112], [8, 512, 64, 112], []]"
+      ],
+      "ms": 0.3578,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "other/unmarked",
+        "ToCopyBackward0",
+        "aten::copy_",
+        "['c10::BFloat16', 'float', 'Scalar']",
+        "[[6, 64, 256, 448], [6, 64, 256, 448], []]"
+      ],
+      "ms": 0.2873,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward",
+        "['c10::BFloat16', 'c10::BFloat16', 'c10::BFloat16', 'ScalarList', 'ScalarList', 'ScalarList', 'ScalarList', 'Scalar', 'ScalarList', 'Scalar', 'ScalarList']",
+        "[[8, 16, 256, 448], [8, 24, 258, 450], [16, 24, 3, 3], [], [], [], [], [], [], [], []]"
+      ],
+      "ms": 0.2823,
+      "calls_per_step": 8.0
+    },
+    {
+      "group": [
+        "unlinked",
+        "torch::autograd::CopySlices",
+        "aten::copy_",
+        "['c10::BFloat16', 'c10::BFloat16', 'Scalar']",
+        "[[8, 64, 128, 224], [8, 64, 128, 224], []]"
+      ],
+      "ms": 0.2771,
+      "calls_per_step": 10.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward",
+        "['c10::BFloat16', 'c10::BFloat16', 'c10::BFloat16', 'ScalarList', 'ScalarList', 'ScalarList', 'ScalarList', 'Scalar', 'ScalarList', 'Scalar', 'ScalarList']",
+        "[[8, 128, 32, 56], [8, 128, 32, 56], [128, 128, 3, 3], [], [], [], [], [], [], [], []]"
+      ],
+      "ms": 0.255,
+      "calls_per_step": 88.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ToCopyBackward0",
+        "aten::copy_",
+        "['float', 'c10::BFloat16', 'Scalar']",
+        "[[8, 48, 256, 448], [8, 48, 256, 448], []]"
+      ],
+      "ms": 0.2431,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward",
+        "['c10::BFloat16', 'c10::BFloat16', 'c10::BFloat16', 'ScalarList', 'ScalarList', 'ScalarList', 'ScalarList', 'Scalar', 'ScalarList', 'Scalar', 'ScalarList']",
+        "[[8, 48, 128, 224], [8, 96, 128, 224], [48, 96, 3, 3], [], [], [], [], [], [], [], []]"
+      ],
+      "ms": 0.2378,
+      "calls_per_step": 7.0
+    },
+    {
+      "group": [
+        "other/unmarked",
+        "CatBackward0",
+        "aten::copy_",
+        "['c10::BFloat16', 'float', 'Scalar']",
+        "[[8, 512, 64, 112], [8, 512, 64, 112], []]"
+      ],
+      "ms": 0.2143,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ToCopyBackward0",
+        "aten::copy_",
+        "['float', 'c10::BFloat16', 'Scalar']",
+        "[[8, 577, 768], [8, 577, 768], []]"
+      ],
+      "ms": 0.2139,
+      "calls_per_step": 24.0
+    },
+    {
+      "group": [
+        "encoder.gaussian_regressor",
+        "ToCopyBackward0",
+        "aten::copy_",
+        "['float', 'c10::BFloat16', 'Scalar']",
+        "[[8, 658, 64, 112], [8, 658, 64, 112], []]"
+      ],
+      "ms": 0.2066,
+      "calls_per_step": 1.0
+    }
+  ],
+  "top_ops": [
+    {
+      "group": [
+        "encoder.pt",
+        "AddmmBackward0",
+        "aten::mm"
+      ],
+      "ms": 23.5226,
+      "calls_per_step": 120.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ConvolutionBackward0",
+        "aten::convolution_backward"
+      ],
+      "ms": 20.8797,
+      "calls_per_step": 24.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward"
+      ],
+      "ms": 16.8167,
+      "calls_per_step": 732.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "NativeLayerNormBackward0",
+        "aten::native_layer_norm_backward"
+      ],
+      "ms": 14.0943,
+      "calls_per_step": 72.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "AddmmBackward0",
+        "aten::mm"
+      ],
+      "ms": 11.0022,
+      "calls_per_step": 108.0
+    },
+    {
+      "group": [
+        "encoder.gaussian_regressor",
+        "ConvolutionBackward0",
+        "aten::convolution_backward"
+      ],
+      "ms": 9.3013,
+      "calls_per_step": 22.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "MulBackward0",
+        "aten::mul"
+      ],
+      "ms": 7.0,
+      "calls_per_step": 57.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ToCopyBackward0",
+        "aten::copy_"
+      ],
+      "ms": 6.3317,
+      "calls_per_step": 180.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "FusedLocalAttentionBackward",
+        "FusedLocalAttentionBackward"
+      ],
+      "ms": 5.8771,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ViewBackward0",
+        "aten::copy_"
+      ],
+      "ms": 4.5682,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "GeluBackward0",
+        "aten::gelu_backward"
+      ],
+      "ms": 4.4924,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "perceptual_vgg",
+        "ConvolutionBackward0",
+        "aten::convolution_backward"
+      ],
+      "ms": 4.0694,
+      "calls_per_step": 21.0
+    },
+    {
+      "group": [
+        "cost_volume_eager_warp",
+        "GridSampler2DBackward0",
+        "aten::grid_sampler_2d_backward"
+      ],
+      "ms": 4.0295,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "other/unmarked",
+        "BmmBackward0",
+        "aten::bmm"
+      ],
+      "ms": 3.94,
+      "calls_per_step": 10.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ScaledDotProductFlashAttentionBackward0",
+        "aten::_flash_attention_backward"
+      ],
+      "ms": 3.1451,
+      "calls_per_step": 54.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "PixelShuffleBackward0",
+        "aten::copy_"
+      ],
+      "ms": 2.8675,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ScaledDotProductFlashAttentionBackward0",
+        "aten::_flash_attention_backward"
+      ],
+      "ms": 2.8666,
+      "calls_per_step": 18.0
+    },
+    {
+      "group": [
+        "other/unmarked",
+        "AddmmBackward0",
+        "aten::mm"
+      ],
+      "ms": 2.7452,
+      "calls_per_step": 2.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "AddmmBackward0",
+        "aten::sum"
+      ],
+      "ms": 2.5995,
+      "calls_per_step": 96.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "NativeLayerNormBackward0",
+        "aten::native_layer_norm_backward"
+      ],
+      "ms": 2.4227,
+      "calls_per_step": 92.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ToCopyBackward0",
+        "aten::copy_"
+      ],
+      "ms": 2.3525,
+      "calls_per_step": 493.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "MulBackward0",
+        "aten::sum"
+      ],
+      "ms": 2.3065,
+      "calls_per_step": 49.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "ConvolutionBackward0",
+        "aten::copy_"
+      ],
+      "ms": 2.0313,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "MmBackward0",
+        "aten::mm"
+      ],
+      "ms": 1.983,
+      "calls_per_step": 180.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "ScaledDotProductEfficientAttentionBackward0",
+        "aten::_efficient_attention_backward"
+      ],
+      "ms": 1.6937,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "MmBackward0",
+        "aten::mm"
+      ],
+      "ms": 1.6702,
+      "calls_per_step": 30.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "GeluBackward0",
+        "aten::gelu_backward"
+      ],
+      "ms": 1.5952,
+      "calls_per_step": 22.0
+    },
+    {
+      "group": [
+        "other/unmarked",
+        "AbsBackward0",
+        "aten::mul"
+      ],
+      "ms": 1.4638,
+      "calls_per_step": 9.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "UpsampleBilinear2DBackward0",
+        "aten::upsample_bilinear2d_backward"
+      ],
+      "ms": 1.4625,
+      "calls_per_step": 9.0
+    },
+    {
+      "group": [
+        "other/unmarked",
+        "UpsampleBilinear2DBackward0",
+        "aten::upsample_bilinear2d_backward"
+      ],
+      "ms": 1.3454,
+      "calls_per_step": 8.0
+    }
+  ],
+  "top_gemms": [
+    {
+      "group": [
+        "encoder.pt",
+        "aten::addmm",
+        "[[2048], [57344, 512], [512, 2048], [], []]",
+        "[[57344, 2048], [2048, 512]]"
+      ],
+      "ms": 4.3982,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "aten::addmm",
+        "[[512], [57344, 2048], [2048, 512], [], []]",
+        "[[57344, 512], [512, 2048]]"
+      ],
+      "ms": 4.3329,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "aten::addmm",
+        "[[512], [57344, 2048], [2048, 512], [], []]",
+        "[[512, 57344], [57344, 2048]]"
+      ],
+      "ms": 4.1367,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "aten::addmm",
+        "[[2048], [57344, 512], [512, 2048], [], []]",
+        "[[2048, 57344], [57344, 512]]"
+      ],
+      "ms": 4.1366,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "other/unmarked",
+        "aten::addmm",
+        "[[512], [57344, 1169], [1169, 512], [], []]",
+        "[[512, 57344], [57344, 1169]]"
+      ],
+      "ms": 2.1707,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::addmm",
+        "[[768], [4616, 3072], [3072, 768], [], []]",
+        "[[768, 4616], [4616, 3072]]"
+      ],
+      "ms": 1.8705,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::addmm",
+        "[[768], [4616, 3072], [3072, 768], [], []]",
+        "[[4616, 768], [768, 3072]]"
+      ],
+      "ms": 1.8043,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::addmm",
+        "[[3072], [4616, 768], [768, 3072], [], []]",
+        "[[3072, 4616], [4616, 768]]"
+      ],
+      "ms": 1.7978,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::addmm",
+        "[[3072], [4616, 768], [768, 3072], [], []]",
+        "[[4616, 3072], [3072, 768]]"
+      ],
+      "ms": 1.741,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::addmm",
+        "[[2304], [4616, 768], [768, 2304], [], []]",
+        "[[2304, 4616], [4616, 768]]"
+      ],
+      "ms": 1.4182,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::addmm",
+        "[[2304], [4616, 768], [768, 2304], [], []]",
+        "[[4616, 2304], [2304, 768]]"
+      ],
+      "ms": 1.3282,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "aten::addmm",
+        "[[8192], [3584, 512], [512, 8192], [], []]",
+        "[[3584, 8192], [8192, 512]]"
+      ],
+      "ms": 1.3118,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "aten::addmm",
+        "[[512], [3584, 8192], [8192, 512], [], []]",
+        "[[3584, 512], [512, 8192]]"
+      ],
+      "ms": 1.0893,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "aten::addmm",
+        "[[512], [3584, 8192], [8192, 512], [], []]",
+        "[[512, 3584], [3584, 8192]]"
+      ],
+      "ms": 1.0518,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "aten::addmm",
+        "[[8192], [3584, 512], [512, 8192], [], []]",
+        "[[8192, 3584], [3584, 512]]"
+      ],
+      "ms": 1.0419,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "other/unmarked",
+        "aten::addmm",
+        "[[512], [57344, 1169], [1169, 512], [], []]",
+        "[[57344, 512], [512, 1169]]"
+      ],
+      "ms": 0.5745,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::addmm",
+        "[[768], [4616, 768], [768, 768], [], []]",
+        "[[768, 4616], [4616, 768]]"
+      ],
+      "ms": 0.5603,
+      "calls_per_step": 24.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::addmm",
+        "[[768], [4616, 768], [768, 768], [], []]",
+        "[[4616, 768], [768, 768]]"
+      ],
+      "ms": 0.482,
+      "calls_per_step": 12.0
+    }
+  ],
+  "norms": [
+    {
+      "group": [
+        "encoder.pt",
+        "[[57344, 512], [57344, 512], [], [57344, 1], [57344, 1], [512], [512], []]"
+      ],
+      "ms": 8.2285,
+      "calls_per_step": 24.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "[[1, 3584, 8192], [1, 3584, 8192], [], [1, 3584, 1], [1, 3584, 1], [8192], [8192], []]"
+      ],
+      "ms": 5.373,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "[[8, 577, 768], [8, 577, 768], [], [8, 577, 1], [8, 577, 1], [768], [768], []]"
+      ],
+      "ms": 1.2655,
+      "calls_per_step": 56.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "[[8, 1792, 128], [8, 1792, 128], [], [8, 1792, 1], [8, 1792, 1], [128], [128], []]"
+      ],
+      "ms": 1.1573,
+      "calls_per_step": 36.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "[[8, 577, 768], [8, 577, 768], []]"
+      ],
+      "ms": 0.5097,
+      "calls_per_step": 24.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "[[1, 3584, 512], [1, 3584, 512], [], [1, 3584, 1], [1, 3584, 1], [512], [512], []]"
+      ],
+      "ms": 0.4928,
+      "calls_per_step": 36.0
+    },
+    {
+      "group": [
+        "encoder.pt",
+        "[[1, 3584, 512], [1, 3584, 512], []]"
+      ],
+      "ms": 0.1247,
+      "calls_per_step": 12.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "[[8, 1792, 128], [8, 1792, 128], []]"
+      ],
+      "ms": 0.034,
+      "calls_per_step": 6.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "[[768], [768], []]"
+      ],
+      "ms": 0.0066,
+      "calls_per_step": 6.0
+    }
+  ],
+  "top_convs": [
+    {
+      "group": [
+        "encoder.pt",
+        "aten::conv2d",
+        "[[8, 512, 64, 112], [512, 512, 3, 3], [512], [], [], [], []]"
+      ],
+      "ms": 23.3763,
+      "calls_per_step": 42.0
+    },
+    {
+      "group": [
+        "encoder.gaussian_regressor",
+        "aten::conv2d",
+        "[[8, 658, 64, 112], [512, 658, 3, 3], [512], [], [], [], []]"
+      ],
+      "ms": 5.4877,
+      "calls_per_step": 13.0
+    },
+    {
+      "group": [
+        "encoder.gaussian_regressor",
+        "aten::conv2d",
+        "[[8, 512, 64, 112], [512, 512, 3, 3], [512], [], [], [], []]"
+      ],
+      "ms": 4.3293,
+      "calls_per_step": 13.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 64, 128, 224], [64, 64, 3, 3], [], [], [], [], []]"
+      ],
+      "ms": 1.8975,
+      "calls_per_step": 42.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 48, 128, 224], [48, 48, 3, 3], [48], [], [], [], []]"
+      ],
+      "ms": 1.5309,
+      "calls_per_step": 48.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 48, 258, 450], [24, 48, 3, 3], [24], [], [], [], []]"
+      ],
+      "ms": 1.3739,
+      "calls_per_step": 13.0
+    },
+    {
+      "group": [
+        "perceptual_vgg",
+        "aten::conv2d",
+        "[[6, 256, 64, 112], [256, 256, 3, 3], [256], [], [], [], []]"
+      ],
+      "ms": 1.1662,
+      "calls_per_step": 4.0
+    },
+    {
+      "group": [
+        "perceptual_vgg",
+        "aten::conv2d",
+        "[[6, 512, 32, 56], [512, 512, 3, 3], [512], [], [], [], []]"
+      ],
+      "ms": 1.1442,
+      "calls_per_step": 7.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 96, 64, 112], [96, 96, 3, 3], [], [], [], [], []]"
+      ],
+      "ms": 0.9971,
+      "calls_per_step": 31.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 48, 256, 448], [48, 48, 1, 1], [48], [], [], [], []]"
+      ],
+      "ms": 0.9204,
+      "calls_per_step": 5.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 128, 32, 56], [128, 128, 3, 3], [128], [], [], [], []]"
+      ],
+      "ms": 0.9013,
+      "calls_per_step": 102.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 96, 128, 224], [48, 96, 3, 3], [], [], [], [], []]"
+      ],
+      "ms": 0.7391,
+      "calls_per_step": 10.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 24, 258, 450], [16, 24, 3, 3], [16], [], [], [], []]"
+      ],
+      "ms": 0.7251,
+      "calls_per_step": 13.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 1152, 32, 56], [128, 1152, 3, 3], [128], [], [], [], []]"
+      ],
+      "ms": 0.7024,
+      "calls_per_step": 11.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 768, 32, 56], [768, 768, 3, 3], [768], [], [], [], []]"
+      ],
+      "ms": 0.6589,
+      "calls_per_step": 10.0
+    },
+    {
+      "group": [
+        "perceptual_vgg",
+        "aten::conv2d",
+        "[[6, 128, 128, 224], [128, 128, 3, 3], [128], [], [], [], []]"
+      ],
+      "ms": 0.64,
+      "calls_per_step": 1.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 256, 34, 58], [128, 256, 3, 3], [128], [], [], [], []]"
+      ],
+      "ms": 0.5236,
+      "calls_per_step": 5.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 128, 34, 58], [256, 128, 3, 3], [256], [], [], [], []]"
+      ],
+      "ms": 0.4706,
+      "calls_per_step": 5.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv2d",
+        "[[8, 48, 64, 112], [48, 48, 3, 3], [48], [], [], [], []]"
+      ],
+      "ms": 0.4569,
+      "calls_per_step": 44.0
+    },
+    {
+      "group": [
+        "encoder.depth_predictor",
+        "aten::conv_transpose2d",
+        "[[8, 96, 32, 56], [96, 96, 4, 4], [96], [], [], [], [], []]"
+      ],
+      "ms": 0.4456,
+      "calls_per_step": 13.0
+    }
+  ],
+  "units": "Average per captured update, summed GPU event durations in ms"
+}

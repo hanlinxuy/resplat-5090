@@ -1,0 +1,753 @@
+{
+  "traceEvents": [
+    {
+      "ph": "M",
+      "name": "process_name",
+      "pid": 1,
+      "args": {
+        "name": "ReSplat GPU spans"
+      }
+    },
+    {
+      "ph": "X",
+      "name": "train_forward_loss",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 1,
+      "ts": 0.0,
+      "dur": 189251.676,
+      "args": {
+        "CUDA kernels": 2868
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.depth_predictor",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 2,
+      "ts": 1022.81,
+      "dur": 80792.544,
+      "args": {
+        "CUDA kernels": 1775
+      }
+    },
+    {
+      "ph": "X",
+      "name": "cost_volume_eager_warp",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 3,
+      "ts": 59644.286,
+      "dur": 3574.283,
+      "args": {
+        "CUDA kernels": 28
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.gaussian_regressor",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 4,
+      "ts": 89726.7,
+      "dur": 4846.051,
+      "args": {
+        "CUDA kernels": 16
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 5,
+      "ts": 98287.001,
+      "dur": 59370.111,
+      "args": {
+        "CUDA kernels": 555
+      }
+    },
+    {
+      "ph": "X",
+      "name": "point_knn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 6,
+      "ts": 98287.001,
+      "dur": 6402.778,
+      "args": {
+        "CUDA kernels": 189
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.0.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 7,
+      "ts": 105224.911,
+      "dur": 478.59,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.0.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 8,
+      "ts": 111180.844,
+      "dur": 2231.827,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.1.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 9,
+      "ts": 114029.019,
+      "dur": 477.885,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.1.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 10,
+      "ts": 120007.48,
+      "dur": 2219.474,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.2.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 11,
+      "ts": 122843.943,
+      "dur": 479.741,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.2.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 12,
+      "ts": 128819.107,
+      "dur": 2234.899,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.3.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 13,
+      "ts": 131673.106,
+      "dur": 479.454,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.3.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 14,
+      "ts": 137633.775,
+      "dur": 2230.675,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.4.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 15,
+      "ts": 140479.806,
+      "dur": 481.053,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.4.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 16,
+      "ts": 146440.379,
+      "dur": 2227.41,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.5.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 17,
+      "ts": 149284.714,
+      "dur": 478.589,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.5.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 18,
+      "ts": 155259.686,
+      "dur": 2223.539,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.gaussian_head",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 19,
+      "ts": 157848.343,
+      "dur": 95.487,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "gsplat_rasterization",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 20,
+      "ts": 162041.31,
+      "dur": 1567.031,
+      "args": {
+        "CUDA kernels": 51
+      }
+    },
+    {
+      "ph": "X",
+      "name": "perceptual_vgg",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 21,
+      "ts": 165420.362,
+      "dur": 10866.623,
+      "args": {
+        "CUDA kernels": 154
+      }
+    },
+    {
+      "ph": "X",
+      "name": "train_backward",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 1,
+      "ts": 190565.685,
+      "dur": 202542.381,
+      "args": {
+        "CUDA kernels": 3714
+      }
+    },
+    {
+      "ph": "X",
+      "name": "train_update",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 1,
+      "ts": 393111.81,
+      "dur": 13003.154,
+      "args": {
+        "CUDA kernels": 68
+      }
+    },
+    {
+      "ph": "X",
+      "name": "train_forward_loss",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 1,
+      "ts": 486350.936,
+      "dur": 188038.339,
+      "args": {
+        "CUDA kernels": 2868
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.depth_predictor",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 2,
+      "ts": 487055.156,
+      "dur": 80145.796,
+      "args": {
+        "CUDA kernels": 1775
+      }
+    },
+    {
+      "ph": "X",
+      "name": "cost_volume_eager_warp",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 3,
+      "ts": 545249.338,
+      "dur": 3505.963,
+      "args": {
+        "CUDA kernels": 28
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.gaussian_regressor",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 4,
+      "ts": 575124.169,
+      "dur": 4854.531,
+      "args": {
+        "CUDA kernels": 16
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 5,
+      "ts": 583645.718,
+      "dur": 59346.879,
+      "args": {
+        "CUDA kernels": 555
+      }
+    },
+    {
+      "ph": "X",
+      "name": "point_knn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 6,
+      "ts": 583645.718,
+      "dur": 6360.314,
+      "args": {
+        "CUDA kernels": 189
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.0.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 7,
+      "ts": 590540.557,
+      "dur": 476.861,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.0.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 8,
+      "ts": 596505.162,
+      "dur": 2233.522,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.1.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 9,
+      "ts": 599356.409,
+      "dur": 477.405,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.1.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 10,
+      "ts": 605320.117,
+      "dur": 2228.691,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.2.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 11,
+      "ts": 608163.844,
+      "dur": 480.029,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.2.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 12,
+      "ts": 614138.593,
+      "dur": 2231.443,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.3.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 13,
+      "ts": 616987.312,
+      "dur": 478.301,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.3.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 14,
+      "ts": 622949.42,
+      "dur": 2223.955,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.4.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 15,
+      "ts": 625789.628,
+      "dur": 480.893,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.4.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 16,
+      "ts": 631768.824,
+      "dur": 2224.339,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.blocks.5.attn",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 17,
+      "ts": 634610.759,
+      "dur": 479.965,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.pt.mv_blocks.5.conv",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 18,
+      "ts": 640591.844,
+      "dur": 2226.93,
+      "args": {
+        "CUDA kernels": 6
+      }
+    },
+    {
+      "ph": "X",
+      "name": "encoder.gaussian_head",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 19,
+      "ts": 643185.012,
+      "dur": 95.872,
+      "args": {
+        "CUDA kernels": 7
+      }
+    },
+    {
+      "ph": "X",
+      "name": "gsplat_rasterization",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 20,
+      "ts": 647347.868,
+      "dur": 1560.662,
+      "args": {
+        "CUDA kernels": 51
+      }
+    },
+    {
+      "ph": "X",
+      "name": "perceptual_vgg",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 21,
+      "ts": 650654.536,
+      "dur": 10887.647,
+      "args": {
+        "CUDA kernels": 154
+      }
+    },
+    {
+      "ph": "X",
+      "name": "train_backward",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 1,
+      "ts": 675725.459,
+      "dur": 202585.613,
+      "args": {
+        "CUDA kernels": 3714
+      }
+    },
+    {
+      "ph": "X",
+      "name": "train_update",
+      "cat": "ReSplat GPU span",
+      "pid": 1,
+      "tid": 1,
+      "ts": 878314.784,
+      "dur": 12956.627,
+      "args": {
+        "CUDA kernels": 68
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 1,
+      "args": {
+        "name": "Training phases"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 2,
+      "args": {
+        "name": "encoder.depth_predictor"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 3,
+      "args": {
+        "name": "cost_volume_eager_warp"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 4,
+      "args": {
+        "name": "encoder.gaussian_regressor"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 5,
+      "args": {
+        "name": "encoder.pt"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 6,
+      "args": {
+        "name": "point_knn"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 7,
+      "args": {
+        "name": "encoder.pt.blocks.0.attn"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 8,
+      "args": {
+        "name": "encoder.pt.mv_blocks.0.conv"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 9,
+      "args": {
+        "name": "encoder.pt.blocks.1.attn"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 10,
+      "args": {
+        "name": "encoder.pt.mv_blocks.1.conv"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 11,
+      "args": {
+        "name": "encoder.pt.blocks.2.attn"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 12,
+      "args": {
+        "name": "encoder.pt.mv_blocks.2.conv"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 13,
+      "args": {
+        "name": "encoder.pt.blocks.3.attn"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 14,
+      "args": {
+        "name": "encoder.pt.mv_blocks.3.conv"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 15,
+      "args": {
+        "name": "encoder.pt.blocks.4.attn"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 16,
+      "args": {
+        "name": "encoder.pt.mv_blocks.4.conv"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 17,
+      "args": {
+        "name": "encoder.pt.blocks.5.attn"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 18,
+      "args": {
+        "name": "encoder.pt.mv_blocks.5.conv"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 19,
+      "args": {
+        "name": "encoder.gaussian_head"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 20,
+      "args": {
+        "name": "gsplat_rasterization"
+      }
+    },
+    {
+      "ph": "M",
+      "name": "thread_name",
+      "pid": 1,
+      "tid": 21,
+      "args": {
+        "name": "perceptual_vgg"
+      }
+    }
+  ]
+}
