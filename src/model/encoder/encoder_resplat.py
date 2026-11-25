@@ -548,8 +548,8 @@ class EncoderReSplat(Encoder[EncoderReSplatCfg]):
         with torch.amp.autocast(device_type='cuda', enabled=self.cfg.pt_head_amp, dtype=torch.bfloat16):
             pt_kwargs = dict(b=b, v=v, h=h, w=w)
             if self.cfg.init_use_local_knn:
-                pt_kwargs["extrinsics"] = context["extrinsics"][0]  # [V, 4, 4]
-                pt_kwargs["intrinsics"] = context["intrinsics"][0]  # [V, 3, 3]
+                pt_kwargs["extrinsics"] = context["extrinsics"]
+                pt_kwargs["intrinsics"] = context["intrinsics"]
             pt_output = self.pt((point_cloud, tmp_feature, offset), **pt_kwargs)
             out = tmp_feature + pt_output
 
@@ -985,8 +985,8 @@ class EncoderReSplat(Encoder[EncoderReSplatCfg]):
 
                 refine_pt_kwargs = dict(b=b, v=v, h=latent_h, w=latent_w)
                 if self.cfg.refine_use_local_knn:
-                    refine_pt_kwargs["extrinsics"] = context["extrinsics"][0]
-                    refine_pt_kwargs["intrinsics"] = context["intrinsics"][0]
+                    refine_pt_kwargs["extrinsics"] = context["extrinsics"]
+                    refine_pt_kwargs["intrinsics"] = context["intrinsics"]
 
                 if cached_knn_idx is not None:
                     refine_pt_kwargs["cached_knn_idx"] = cached_knn_idx

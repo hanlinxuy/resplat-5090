@@ -184,8 +184,8 @@ class PlainPointTransformer(nn.Module):
             knn_idx: [N, K] int tensor of KNN indices
         """
         if self.use_local_knn:
-            assert b is not None and b == 1
-            assert extrinsics is not None and intrinsics is not None
+            if extrinsics is None or intrinsics is None:
+                raise ValueError("local KNN requires camera poses and intrinsics")
             knn_idx = local_knn_query(
                 self.knn_samples, p, extrinsics, intrinsics,
                 v, h, w,

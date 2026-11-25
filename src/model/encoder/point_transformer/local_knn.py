@@ -2,15 +2,17 @@ import torch
 from torch import Tensor
 
 
+@torch.no_grad()
 def local_knn_query(
     k: int,
-    points_3d: Tensor,          # [N, 3] flattened (v*h*w)
-    extrinsics: Tensor,          # [V, 4, 4] camera-to-world
-    intrinsics: Tensor,          # [V, 3, 3] normalized (0-1)
+    points_3d: Tensor,          # [B*V*H*W, 3], scene-major
+    extrinsics: Tensor,          # [B, V, 4, 4] or [V, 4, 4]
+    intrinsics: Tensor,          # [B, V, 3, 3] or [V, 3, 3], normalized
     v: int, h: int, w: int,
     spatial_radius: int = 3,
     num_neighbor_views: int = 4,
     cross_view_radius: int = 3,
+    query_chunk_size: int = 4096,
 ) -> Tensor:
     """Local KNN for structured point clouds from multi-view depth maps.
 
@@ -20,13 +22,29 @@ def local_knn_query(
 
     Then selects top-k nearest from the combined candidate set.
 
-    Returns [N, k] int32 tensor, same interface as pointops.knn_query.
-
-    This is the batched implementation — cross-view projection is fully
-    vectorized over all source views and neighbor views simultaneously.
+    Return global [B*V*H*W, k] int32 indices in the flattened point array.
+    Projection is vectorized over camera pairs within each scene. Only one
+    chunk of candidate points is materialized at a time.
     """
-    N = points_3d.shape[0]
-    assert N == v * h * w
+    N = v * h * w
+    if extrinsics.ndim == 4:
+        batch = extrinsics.shape[0]
+        if extrinsics.shape != (batch, v, 4, 4) or intrinsics.shape != (batch, v, 3, 3):
+            raise ValueError("expected camera tensors with shape [B,V,4,4] and [B,V,3,3]")
+        if batch == 0 or points_3d.shape != (batch * N, 3):
+            raise ValueError("point array must contain B*V*H*W scene-major points")
+        indices = torch.empty((batch * N, k), device=points_3d.device, dtype=torch.int32)
+        for scene in range(batch):
+            start = scene * N
+            indices[start:start + N] = local_knn_query(
+                k, points_3d[start:start + N], extrinsics[scene], intrinsics[scene],
+                v, h, w, spatial_radius, num_neighbor_views, cross_view_radius,
+                query_chunk_size,
+            ).add_(start)
+        return indices
+
+    if points_3d.shape != (N, 3) or query_chunk_size <= 0:
+        raise ValueError("expected V*H*W points and a positive chunk size")
     device = points_3d.device
 
     points_grid = points_3d.reshape(v, h, w, 3)
@@ -50,31 +68,7 @@ def local_knn_query(
     center_mask = (dr != 0) | (dc != 0)
     dr = dr[center_mask]
     dc = dc[center_mask]
-    S = dr.shape[0]  # (2r+1)^2 - 1
-
-    # Point grid indices: [V, H, W] for row and col
-    view_idx = torch.arange(v, device=device).view(v, 1, 1).expand(v, h, w)
-    row_idx = torch.arange(h, device=device).view(1, h, 1).expand(v, h, w)
-    col_idx = torch.arange(w, device=device).view(1, 1, w).expand(v, h, w)
-
-    # Flatten to [N]
-    view_flat = view_idx.reshape(N)
-    row_flat = row_idx.reshape(N)
-    col_flat = col_idx.reshape(N)
-
-    # Neighbor rows/cols: [N, S]
-    nb_row = row_flat.unsqueeze(1) + dr.unsqueeze(0)  # [N, S]
-    nb_col = col_flat.unsqueeze(1) + dc.unsqueeze(0)  # [N, S]
-
-    # Clamp and track validity
-    spatial_valid = (nb_row >= 0) & (nb_row < h) & (nb_col >= 0) & (nb_col < w)
-    nb_row = nb_row.clamp(0, h - 1)
-    nb_col = nb_col.clamp(0, w - 1)
-
-    # Flat indices: view * h * w + row * w + col
-    spatial_indices = view_flat.unsqueeze(1) * (h * w) + nb_row * w + nb_col  # [N, S]
-
-    # --- 3. Cross-view candidate indices [N, nv * C] (batched) ---
+    # Candidate offsets for projected points in nearby views.
     cr = cross_view_radius
     cv_offsets_r = torch.arange(-cr, cr + 1, device=device)
     cv_offsets_c = torch.arange(-cr, cr + 1, device=device)
@@ -111,55 +105,38 @@ def local_knn_query(
     proj_col = (proj[..., 0] * w - 0.5).round().long()  # [V, nv, HW]
     proj_row = (proj[..., 1] * h - 0.5).round().long()
 
-    nb_r = proj_row.unsqueeze(-1) + cv_dr  # [V, nv, HW, C]
-    nb_c = proj_col.unsqueeze(-1) + cv_dc
+    proj_row = proj_row.transpose(1, 2).reshape(N, nv)
+    proj_col = proj_col.transpose(1, 2).reshape(N, nv)
+    valid_z = valid_z.transpose(1, 2).reshape(N, nv)
+    target_base = neighbor_views * hw
+    candidate_count = dr.numel() + nv * C
+    result = torch.empty((N, k), device=device, dtype=torch.int32)
+    for start in range(0, N, query_chunk_size):
+        end = min(start + query_chunk_size, N)
+        query = torch.arange(start, end, device=device)
+        source_view = query // hw
+        row = query % hw // w
+        col = query % w
+        nb_row = row[:, None] + dr
+        nb_col = col[:, None] + dc
+        spatial_valid = (nb_row >= 0) & (nb_row < h) & (nb_col >= 0) & (nb_col < w)
+        spatial_indices = source_view[:, None] * hw + nb_row.clamp_(0, h - 1) * w + nb_col.clamp_(0, w - 1)
 
-    cross_valid = ((nb_r >= 0) & (nb_r < h) & (nb_c >= 0) & (nb_c < w)
-                   & valid_z.unsqueeze(-1))
-    nb_r.clamp_(0, h - 1)
-    nb_c.clamp_(0, w - 1)
+        nb_r = proj_row[start:end, :, None] + cv_dr
+        nb_c = proj_col[start:end, :, None] + cv_dc
+        cross_valid = ((nb_r >= 0) & (nb_r < h) & (nb_c >= 0) & (nb_c < w)
+                       & valid_z[start:end, :, None])
+        cross_indices = target_base[source_view, :, None] + nb_r.clamp_(0, h - 1) * w + nb_c.clamp_(0, w - 1)
+        indices = torch.cat((spatial_indices, cross_indices.flatten(1)), dim=1)
+        valid = torch.cat((spatial_valid, cross_valid.flatten(1)), dim=1)
 
-    tgt_view_idx = neighbor_views.reshape(v, nv, 1, 1)  # [V, nv, 1, 1]
-    flat_idx = tgt_view_idx * hw + nb_r * w + nb_c       # [V, nv, HW, C]
+        candidate_pos = points_3d[indices]
+        sq_dist = ((candidate_pos - points_3d[start:end, None]) ** 2).sum(dim=-1)
+        sq_dist.masked_fill_(~valid, float("inf"))
+        topk_dist, topk_local = sq_dist.topk(min(k, candidate_count), largest=False)
+        neighbors = indices.gather(1, topk_local)
+        neighbors = torch.where(topk_dist == float("inf"), query[:, None], neighbors)
+        result[start:end, :neighbors.shape[1]] = neighbors
+        result[start:end, neighbors.shape[1]:] = query[:, None]
 
-    # Rearrange: [V, nv, HW, C] -> [V, HW, nv, C] -> [N, nv*C]
-    cross_indices = flat_idx.permute(0, 2, 1, 3).reshape(N, nv * C)
-    cross_valid = cross_valid.permute(0, 2, 1, 3).reshape(N, nv * C)
-
-    # --- 4. Combine candidates and select top-k ---
-    all_indices = torch.cat([spatial_indices, cross_indices], dim=1)  # [N, S + nv*C]
-    all_valid = torch.cat([spatial_valid, cross_valid], dim=1)  # [N, S + nv*C]
-    total_candidates = all_indices.shape[1]
-
-    # Gather candidate 3D positions
-    # Clamp indices for safe gather (invalid ones will be masked anyway)
-    gather_idx = all_indices.clamp(0, N - 1)  # [N, total_candidates]
-    candidate_pos = points_3d[gather_idx]  # [N, total_candidates, 3]
-
-    # Squared distances
-    query_pos = points_3d.unsqueeze(1)  # [N, 1, 3]
-    sq_dist = ((candidate_pos - query_pos) ** 2).sum(dim=-1)  # [N, total_candidates]
-
-    # Mask invalid candidates
-    sq_dist[~all_valid] = float("inf")
-
-    # Select top-k
-    if total_candidates <= k:
-        # Not enough candidates, take all and pad with self
-        topk_dist, topk_local = sq_dist.topk(min(k, total_candidates), largest=False)
-        result = gather_idx.gather(1, topk_local)
-        if total_candidates < k:
-            self_idx = torch.arange(N, device=device).unsqueeze(1).expand(N, k - total_candidates)
-            result = torch.cat([result, self_idx], dim=1)
-    else:
-        topk_dist, topk_local = sq_dist.topk(k, largest=False)
-        result = gather_idx.gather(1, topk_local)
-
-    # Replace any inf-distance slots with self-index
-    inf_mask = topk_dist == float("inf")
-    if inf_mask.any():
-        self_idx = torch.arange(N, device=device).unsqueeze(1).expand_as(result)
-        result[inf_mask] = self_idx[inf_mask]
-
-    return result.int()
-
+    return result
