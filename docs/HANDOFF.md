@@ -114,18 +114,20 @@ RESPLAT_PROFILE_CAPTURE=1 RESPLAT_PROFILE_WARMUP=10 RESPLAT_PROFILE_SAMPLES=4 \
 # Pointer to a locally prepared dataset with train/test chunks and view-index.json.
 face_data=/path/to/cafca-448
 source_ckpt=/path/to/trained-50k.ckpt
+face_out=runs/face-803k
 python -m benchmarks.expand_gaussian_head_checkpoint "$source_ckpt" runs/803k-head-warm-start.pth
 
 env -u RESPLAT_SYNTHETIC_RANDOM_WEIGHTS -u RESPLAT_PERCEPTUAL_BF16 \
   RESPLAT_SYNTHETIC_QUALITY_FIXTURE="$face_data" RESPLAT_QUALITY_EVAL_STEPS=216,432,1080 \
-  RESPLAT_PROFILE_WARMUP=8 RESPLAT_PROFILE_SAMPLES=100 \
+  RESPLAT_PROFILE_JSON="$face_out/step-profile.json" RESPLAT_PROFILE_WARMUP=8 RESPLAT_PROFILE_SAMPLES=100 \
   PYTORCH_ALLOC_CONF=expandable_segments:True \
-  benchmarks/run_dl3dv_single_gpu.sh "$face_data" null runs/face-803k 1 \
+  python -m src.main +experiment=dl3dv \
   'loss=[mse]' '~loss.lpips' dataset/view_sampler=evaluation \
   "dataset.view_sampler.index_path=$face_data/view-index.json" \
+  "dataset.roots=['$face_data']" dataset.view_sampler.num_context_views=8 \
   'dataset.image_shape=[224,448]' 'dataset.ori_image_shape=[224,448]' \
   dataset.near=0.25 dataset.far=2.0 dataset.augment=false dataset.opencv_pose_format=false \
-  data_loader.train.num_workers=0 data_loader.train.persistent_workers=false \
+  data_loader.train.batch_size=1 data_loader.train.num_workers=0 data_loader.train.persistent_workers=false \
   dataset.train_times_per_scene=6 model.encoder.shim_patch_size=4 \
   model.encoder.init_gaussian_multiple=16 model.encoder.init_use_checkpointing=true \
   model.encoder.init_fused_local_attention_rows=4 model.encoder.init_fused_knn_candidates=true \
@@ -133,7 +135,8 @@ env -u RESPLAT_SYNTHETIC_RANDOM_WEIGHTS -u RESPLAT_PERCEPTUAL_BF16 \
   optimizer.lr=0.00005 optimizer.warm_up_ratio=0.05 \
   checkpointing.pretrained_model=runs/803k-head-warm-start.pth checkpointing.no_strict_load=true \
   checkpointing.save_top_k=1 checkpointing.every_n_train_steps=216 \
-  trainer.val_check_interval=1.0 trainer.max_steps=216
+  trainer.num_nodes=1 trainer.num_sanity_val_steps=0 trainer.val_check_interval=1.0 trainer.max_steps=216 \
+  train.eval_model_every_n_val=0 wandb.mode=disabled "output_dir=$face_out"
 ```
 
 80 万版的实际长训是从上述 216 步 checkpoint 再续 2,160 步。将 `checkpointing.pretrained_model` 指到该 checkpoint，并设 `trainer.max_steps=2160`。同一数据的 50K 对照保持 `init_gaussian_multiple=1`，直接载入训练好的 50K 起点。两项结果见[画质与吞吐记录](BENCHMARKS.md#其他独立负载)。手机端单帧延迟尚无实测。
